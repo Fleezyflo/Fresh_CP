@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <style>
+      body {
+        font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+        margin: 16px;
+        color: #202124;
+      }
+      .dialog-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      .title {
+        font-size: 18px;
+        margin: 0;
+      }
+      .status {
+        font-size: 12px;
+        color: #5f6368;
+      }
+      .toolbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 12px;
+        gap: 8px;
+      }
+      .toolbar button {
+        background-color: #1a73e8;
+        border: none;
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .toolbar button:disabled {
+        background-color: #dadce0;
+        color: #5f6368;
+        cursor: not-allowed;
+      }
+      .json-dump {
+        background-color: #f1f3f4;
+        border: 1px solid #dadce0;
+        border-radius: 6px;
+        padding: 12px;
+        font-family: 'Roboto Mono', 'Source Code Pro', monospace;
+        font-size: 12px;
+        line-height: 1.4;
+        max-height: 520px;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+    <script>
+      (function() {
+        'use strict';
+
+        function decodePayload(encoded) {
+          if (!encoded) {
+            return '';
+          }
+          try {
+            if (typeof TextDecoder === 'function') {
+              const binary = atob(encoded);
+              const bytes = new Uint8Array(binary.length);
+              for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+              }
+              const decoder = new TextDecoder('utf-8');
+              return decoder.decode(bytes);
+            }
+          } catch (decoderError) {
+            console.error('json_export_dialog: TextDecoder decode failed', decoderError);
+          }
+          try {
+            const binary = atob(encoded);
+            let result = '';
+            for (let i = 0; i < binary.length; i++) {
+              const hex = binary.charCodeAt(i).toString(16).padStart(2, '0');
+              result += '%' + hex;
+            }
+            return decodeURIComponent(result);
+          } catch (fallbackError) {
+            console.error('json_export_dialog: Base64 decode failed', fallbackError);
+            return '';
+          }
+        }
+
+        function updateStatus(message) {
+          var statusEl = document.getElementById('status');
+          if (statusEl) {
+            statusEl.textContent = message || '';
+          }
+        }
+
+        function setupContent() {
+          var payloadMeta = document.querySelector('meta[name="data-json"]');
+          var lengthMeta = document.querySelector('meta[name="data-length"]');
+          var jsonDump = document.getElementById('jsonDump');
+          var copyButton = document.getElementById('copyButton');
+
+          if (!jsonDump || !payloadMeta) {
+            if (jsonDump) {
+              jsonDump.textContent = '(No JSON payload provided)';
+            }
+            if (copyButton) {
+              copyButton.disabled = true;
+            }
+            updateStatus('Payload unavailable');
+            return;
+          }
+
+          var encoded = payloadMeta.getAttribute('content') || '';
+          var decoded = decodePayload(encoded);
+          var isClientPreview = false;
+          try {
+            var parsed = JSON.parse(decoded);
+            if (parsed && parsed.quoteDate && parsed.items && parsed.totals) {
+              isClientPreview = true;
+              renderClientPreview(parsed, jsonDump);
+            }
+          } catch (e) {
+            // Not valid JSON or not a client preview structure
+          }
+
+          if (!isClientPreview) {
+            jsonDump.textContent = decoded || '(Empty JSON payload)';
+          } else {
+            var toggleBtn = document.createElement('button');
+            toggleBtn.textContent = 'Show Raw JSON';
+            toggleBtn.style.marginRight = '8px';
+            toggleBtn.onclick = function() {
+              jsonDump.textContent = decoded || '(Empty JSON payload)';
+            };
+            var toolbar = document.querySelector('.toolbar');
+            if (toolbar && copyButton) {
+              toolbar.insertBefore(toggleBtn, copyButton);
+            }
+          }
+
+          var lengthValue = lengthMeta ? lengthMeta.getAttribute('content') : '';
+          if (decoded && !lengthValue) {
+            lengthValue = String(decoded.length);
+          }
+          if (lengthValue) {
+            updateStatus(lengthValue + ' characters');
+          } else {
+            updateStatus('Ready');
+          }
+
+          if (copyButton) {
+            copyButton.addEventListener('click', function handleCopyClick() {
+              copyJson(jsonDump.textContent);
+            });
+          }
+        }
+
+        function renderClientPreview(data, container) {
+          var html = '<div style="padding:10px; font-family:Arial,sans-serif;">';
+          html += '<h3>Client Quote Preview</h3>';
+          html += '<p style="color:#666; font-size:11px;">Date: ' + (data.quoteDate || '') + '</p>';
+          html += '<table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:15px;">';
+          html += '<tr style="background:#f1f3f4; text-align:left;"><th style="padding:6px;">Description</th><th style="padding:6px;">Qty</th><th style="padding:6px;">Unit</th><th style="padding:6px; text-align:right;">Amount</th></tr>';
+
+          (data.items || []).forEach(function(item) {
+            html += '<tr>';
+            html += '<td style="padding:6px; border-bottom:1px solid #eee;">' + (item.clientLineName || item.description || '') + '</td>';
+            html += '<td style="padding:6px; border-bottom:1px solid #eee;">' + (item.qty || '') + '</td>';
+            html += '<td style="padding:6px; border-bottom:1px solid #eee;">' + (item.unit || '') + '</td>';
+            html += '<td style="padding:6px; border-bottom:1px solid #eee; text-align:right;">' + (item.clientAmount || 0) + '</td>';
+            html += '</tr>';
+          });
+
+          html += '</table>';
+          if (data.totals) {
+            var totalValue = data.totals.total || 0;
+            var totalDisplay = typeof totalValue === 'number' ? totalValue.toFixed(2) : String(totalValue);
+            html += '<div style="text-align:right; font-weight:bold; font-size:13px;">';
+            html += 'Total: ' + totalDisplay;
+            html += '</div>';
+          }
+          html += '</div>';
+          container.innerHTML = html;
+        }
+
+        function copyJson(text) {
+          if (!text) {
+            updateStatus('Nothing to copy');
+            return;
+          }
+          if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            navigator.clipboard.writeText(text)
+              .then(function() {
+                updateStatus('Copied to clipboard');
+              })
+              .catch(function(err) {
+                console.error('json_export_dialog: clipboard write failed', err);
+                fallbackCopy(text);
+              });
+          } else {
+            fallbackCopy(text);
+          }
+        }
+
+        function fallbackCopy(text) {
+          try {
+            var textarea = document.createElement('textarea');
+            textarea.className = 'hidden';
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            updateStatus('Copied to clipboard');
+          } catch (copyError) {
+            console.error('json_export_dialog: fallback copy failed', copyError);
+            updateStatus('Copy unsupported in this browser');
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', setupContent);
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="dialog-header">
+      <h2 class="title">Quote JSON Export</h2>
+      <div class="status" id="status">Loading…</div>
+    </header>
+    <div class="toolbar">
+      <button type="button" id="copyButton">Copy JSON</button>
+    </div>
+    <pre id="jsonDump" class="json-dump" aria-label="Exported JSON preview"></pre>
+  </body>
+</html>

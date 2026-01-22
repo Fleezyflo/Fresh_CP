@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: 'Google Sans', Arial, sans-serif;
+        margin: 0;
+        padding: 0 0 16px;
+        background: #f8f9fa;
+        color: #202124;
+      }
+      header {
+        padding: 16px 20px;
+        background: #1a73e8;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .container {
+        padding: 16px 20px 24px;
+      }
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 12px;
+        color: #5f6368;
+      }
+      .meta-row span {
+        background: #e8f0fe;
+        color: #1a73e8;
+        padding: 4px 8px;
+        border-radius: 999px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+        font-size: 12px;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      th, td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #e0e0e0;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #f1f3f4;
+        font-weight: 600;
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 999px;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .badge.pending { background: #fef7e0; color: #b06000; }
+      .badge.approved { background: #e6f4ea; color: #188038; }
+      .badge.rejected { background: #fdecea; color: #d93025; }
+      .badge.internal { background: #fef7e0; color: #b06000; }
+      .section {
+        margin-top: 20px;
+      }
+      .section h3 {
+        margin: 0 0 10px;
+        font-size: 14px;
+        color: #1f2933;
+      }
+      .audit-list {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #e0e0e0;
+        padding: 12px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 11px;
+      }
+      .audit-list .audit-entry {
+        border-bottom: 1px solid #eef1f4;
+        padding: 8px 0;
+      }
+      .audit-list .audit-entry:last-child {
+        border-bottom: none;
+      }
+      .audit-entry strong {
+        display: block;
+        color: #1a73e8;
+      }
+      .empty-state {
+        padding: 40px 20px;
+        text-align: center;
+        color: #5f6368;
+        font-size: 12px;
+      }
+      .error {
+        padding: 16px;
+        margin: 20px;
+        background: #fdecea;
+        color: #d93025;
+        border-radius: 12px;
+      }
+      .contract-group {
+        margin-bottom: 8px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: #fff;
+        overflow: hidden;
+      }
+      .contract-group-header {
+        padding: 8px 12px;
+        background: #f8f9fa;
+        font-weight: 600;
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .contract-item-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+      .contract-item {
+        padding: 8px 12px;
+        border-top: 1px solid #f1f3f4;
+        font-size: 11px;
+      }
+      .item-details {
+        color: #5f6368;
+        margin-top: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>Scope Contract Overview</header>
+    <div id="content" class="container"></div>
+    <script>
+      let categoryConfigMap = {};
+
+      function escapeHtml(text) {
+        if (text === null || text === undefined) {
+          return '';
+        }
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function renderSectioned(contract, briefType) {
+        const entries = Array.isArray(contract && contract.entries) ? contract.entries : [];
+        const sections = entries.filter(function(entry) { return entry && entry.isSection; });
+        const children = entries.filter(function(entry) { return entry && !entry.isSection; });
+        const config = categoryConfigMap[briefType] || null;
+        const configuredPhases = config && Array.isArray(config.phases) ? config.phases : [];
+        const parentLookup = {};
+        sections.forEach(function(section) {
+          const key = (section.id || section.sectionId || section.canonical || section.scopeLabel || '').toString().toLowerCase();
+          if (key) {
+            parentLookup[key] = section;
+          }
+          const canonical = section.metadata && section.metadata.sectionCanonical ? section.metadata.sectionCanonical.toString().toLowerCase() : '';
+          if (canonical && !parentLookup[canonical]) {
+            parentLookup[canonical] = section;
+          }
+        });
+        let parents = sections.slice();
+        if (!parents.length && Array.isArray(contract.sections) && contract.sections.length) {
+          contract.sections.forEach(function(section, idx) {
+            const id = section.id || section.sectionId || section.canonical || ('section-' + (idx + 1));
+            parents.push({
+              id: id,
+              sectionId: id,
+              scopeLabel: section.label || section.canonical || id,
+              isSection: true,
+              metadata: {
+                sectionCanonical: section.canonical || id
+              }
+            });
+          });
+        }
+        if (!parents.length && entries.length) {
+          const sectionIds = Array.from(new Set(entries.map(function(entry) {
+            return (entry.sectionId || entry.canonical || entry.scopeLabel || '').toString().toLowerCase();
+          }).filter(Boolean)));
+          parents = sectionIds.map(function(sectionId, idx) {
+            const phase = configuredPhases.find(function(phase) {
+              const normalized = (phase.canonical || phase.id || phase.label || '').toString().toLowerCase();
+              return normalized === sectionId;
+            });
+            const label = phase ? (phase.label || phase.canonical || phase.id) : sectionId;
+            return {
+              id: phase && phase.id ? phase.id : ('section-' + (idx + 1)),
+              sectionId: phase && phase.id ? phase.id : sectionId,
+              scopeLabel: label,
+              isSection: true,
+              metadata: {
+                sectionCanonical: phase && phase.canonical ? phase.canonical : sectionId
+              }
+            };
+          });
+        }
+        if (configuredPhases.length) {
+          const presentCanonicals = new Set(parents.map(function(parent) {
+            return (parent.metadata && parent.metadata.sectionCanonical ? parent.metadata.sectionCanonical : (parent.sectionId || parent.id || parent.scopeLabel || '')).toString().toLowerCase();
+          }));
+          configuredPhases.forEach(function(phase, index) {
+            const canonical = (phase.canonical || phase.id || phase.label || '').toString().toLowerCase();
+            if (canonical && !presentCanonicals.has(canonical)) {
+              presentCanonicals.add(canonical);
+              parents.push({
+                id: phase.id || phase.canonical || ('section-missing-' + (index + 1)),
+                sectionId: phase.id || phase.canonical || ('section-missing-' + (index + 1)),
+                scopeLabel: (phase.label || phase.canonical || phase.id || 'Missing Phase') + ' (missing in contract)',
+                isSection: true,
+                metadata: {
+                  sectionCanonical: phase.canonical || phase.id || '',
+                  missing: true
+                }
+              });
+            }
+          });
+        }
+        const hierarchy = contract.hierarchy || {};
+        const childMap = {};
+        children.forEach(function(child) {
+          if (child && child.id) {
+            childMap[child.id] = child;
+          }
+        });
+        let rows = '';
+        const matchedChildren = new Set();
+        parents.forEach(function(parent) {
+          if (!parent || !parent.id) {
+            return;
+          }
+          const parentKey = (parent.sectionId || parent.id || '').toString().toLowerCase();
+          const parentCanonical = parent.metadata && parent.metadata.sectionCanonical
+            ? parent.metadata.sectionCanonical.toString().toLowerCase()
+            : parentKey;
+          const childCandidates = Array.isArray(hierarchy[parent.id]) && hierarchy[parent.id].length
+            ? hierarchy[parent.id].map(function(id) { return childMap[id]; }).filter(Boolean)
+            : children.filter(function(child) {
+                const childSection = (child.sectionId || '').toString().toLowerCase();
+                const childCanonical = child.metadata && child.metadata.sectionCanonical
+                  ? child.metadata.sectionCanonical.toString().toLowerCase()
+                  : '';
+                return (childSection && (childSection === parentKey || childSection === parentCanonical))
+                  || (childCanonical && (childCanonical === parentCanonical || childCanonical === parentKey));
+              });
+          childCandidates.forEach(function(child) { matchedChildren.add(child.id); });
+          const childItems = childCandidates.map(function(child) {
+            return '<li><strong>' + escapeHtml(child.scopeLabel || child.id) + '</strong> — ' +
+              escapeHtml((child.deliverables || []).slice(0, 3).join(', ')) + '</li>';
+          });
+          const requirements = childItems.length
+            ? '<ul>' + childItems.join('') + '</ul>'
+            : '<span style="color:#5f6368;">No requirements identified.</span>';
+          rows += '<tr>' +
+            '<td><strong>' + escapeHtml(parent.scopeLabel || parent.sectionId || parent.id) + '</strong></td>' +
+            '<td>' + escapeHtml(parent.visibility || 'Client') + '</td>' +
+            '<td>' + escapeHtml(parent.approvalStatus || 'pending') + '</td>' +
+            '<td>' + requirements + '</td>' +
+            '</tr>';
+        });
+        const orphanChildren = children.filter(function(child) { return child && child.id && !matchedChildren.has(child.id); });
+        if (orphanChildren.length) {
+          orphanChildren.forEach(function(child) {
+            rows += '<tr>' +
+              '<td><strong>' + escapeHtml(child.scopeLabel || child.id) + '</strong></td>' +
+              '<td>' + escapeHtml(child.visibility || 'Client') + '</td>' +
+              '<td>' + escapeHtml(child.approvalStatus || 'pending') + '</td>' +
+              '<td><span style="color:#d93025;">Orphaned requirement — parent section missing</span></td>' +
+              '</tr>';
+          });
+        }
+        if (!rows) {
+          return '';
+        }
+        return '<table><thead><tr><th>Section</th><th>Visibility</th><th>Status</th><th>Requirements</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      }
+
+      function renderOverview(result) {
+        const container = document.getElementById('content');
+        if (!result || !result.ok) {
+          container.innerHTML = '<div class="error">' + escapeHtml((result && result.message) || 'No approved scope snapshot found. Approve a scope via the AI Quote Builder first.') + '</div>';
+          return;
+        }
+        const contract = result.contract;
+        const snapshot = result.snapshot || {};
+        const audit = Array.isArray(result.audit) ? result.audit : [];
+        if (result.categoryConfig) {
+          categoryConfigMap = result.categoryConfig;
+        }
+        const briefType = snapshot && snapshot.briefType ? snapshot.briefType : (contract && contract.briefType ? contract.briefType : '');
+
+        let html = '';
+        html += '<div class="meta-row">';
+        if (contract && contract.version) {
+          html += '<span>Version ' + escapeHtml(contract.version) + '</span>';
+        }
+        if (contract && contract.contractHash) {
+          html += '<span title="Integrity Hash: ' + escapeHtml(contract.contractHash) + '">✓ Verified</span>';
+        }
+        html += '<span>' + (contract && contract.entries ? contract.entries.length : 0) + ' entries</span>';
+        if (snapshot && snapshot.createdAt) {
+          html += '<span>Approved ' + escapeHtml(new Date(snapshot.createdAt).toLocaleString()) + '</span>';
+        }
+        if (snapshot && snapshot.createdBy) {
+          html += '<span>By ' + escapeHtml(snapshot.createdBy) + '</span>';
+        }
+        if (briefType) {
+          html += '<span>Brief Type ' + escapeHtml(briefType) + '</span>';
+        }
+        html += '</div>';
+
+        if (contract && Array.isArray(contract.entries) && contract.entries.length > 0) {
+          const sections = {};
+          contract.entries.forEach(entry => {
+            const sectionKey = entry.sectionId || 'Uncategorized';
+            if (!sections[sectionKey]) sections[sectionKey] = [];
+            sections[sectionKey].push(entry);
+          });
+
+          Object.keys(sections).forEach(sectionKey => {
+            const items = sections[sectionKey];
+            html += '<div class="contract-group">';
+            html += '<div class="contract-group-header">' + escapeHtml(sectionKey) + ' <span class="badge pending">' + items.length + '</span></div>';
+            html += '<ul class="contract-item-list">';
+            
+            items.forEach(entry => {
+               const deliverables = Array.isArray(entry.deliverables) && entry.deliverables.length > 0
+              ? escapeHtml(entry.deliverables.slice(0, 3).join(', ') + (entry.deliverables.length > 3 ? '...' : ''))
+             : '—';
+             
+             html += '<li class="contract-item">';
+             html += '<div><strong>' + escapeHtml(entry.scopeLabel || entry.id) + '</strong></div>';
+             html += '<div class="item-details">' + deliverables + '</div>';
+             html += '</li>';
+            });
+            html += '</ul></div>';
+          });
+        } else {
+          html += '<div class="empty-state">No scope entries captured yet. Approve a scope via the AI Quote Builder.</div>';
+        }
+
+        html += '<div class="section">';
+        html += '<h3>Audit Trail</h3>';
+        if (audit.length === 0) {
+          html += '<div class="empty-state" style="margin:0;">No scope audit events logged yet.</div>';
+        } else {
+          html += '<div class="audit-list">';
+          audit.forEach(function(entry) {
+            html += '<div class="audit-entry">' +
+              '<strong>' + escapeHtml(entry.event) + '</strong>' +
+              '<div>' + escapeHtml(entry.timestamp || '') + '</div>' +
+              '<div>' + escapeHtml(entry.summary || '') + '</div>' +
+              '</div>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+
+        container.innerHTML = html;
+      }
+
+      function renderStatusBadge(status) {
+        const normalised = status || 'pending';
+        if (normalised === 'approved') {
+          return '<span class="badge approved">Approved</span>';
+        }
+        if (normalised === 'rejected') {
+          return '<span class="badge rejected">Rejected</span>';
+        }
+        return '<span class="badge pending">' + escapeHtml(normalised) + '</span>';
+      }
+
+      function handleError(error) {
+        const container = document.getElementById('content');
+        container.innerHTML = '<div class="error">' + escapeHtml(error && error.message ? error.message : error) + '</div>';
+      }
+
+      google.script.run.withSuccessHandler(renderOverview).withFailureHandler(handleError).getScopeContractOverview();
+    </script>
+  </body>
+</html>

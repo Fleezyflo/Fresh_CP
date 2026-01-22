@@ -1,0 +1,391 @@
+<!-- Config Error Banner Component - Phase 1 Fix 1A -->
+<!-- INSERT THIS IMMEDIATELY AFTER <body> TAG IN ai_quote_sidebar.html (after line 1548) -->
+
+<!-- Error Banner (Critical Errors) -->
+<div id="config-error-banner" class="config-error-banner hidden">
+  <div class="banner-content">
+    <div class="banner-icon error-icon">⚠️</div>
+    <div class="banner-text">
+      <h3 class="banner-title">Configuration Load Error</h3>
+      <p class="banner-message" id="config-error-message"></p>
+      <ul class="banner-details" id="config-error-details"></ul>
+    </div>
+  </div>
+  <div class="banner-actions">
+    <button id="retry-config-btn" class="btn-banner btn-primary">Retry</button>
+    <button id="use-defaults-btn" class="btn-banner btn-secondary">Use Defaults</button>
+    <button id="dismiss-error-btn" class="btn-banner btn-link">Dismiss</button>
+  </div>
+</div>
+
+<!-- Warning Banner (Degraded State) -->
+<div id="config-warning-banner" class="config-warning-banner hidden">
+  <div class="banner-content">
+    <div class="banner-icon warning-icon">⚡</div>
+    <div class="banner-text">
+      <p class="banner-message" id="config-warning-message"></p>
+    </div>
+  </div>
+  <button id="dismiss-warning-btn" class="btn-banner btn-link">✕</button>
+</div>
+
+<style>
+  /* Error Banner Styles */
+  .config-error-banner {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    background: #fee;
+    border: 2px solid #c00;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 9999;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  .config-error-banner.hidden {
+    display: none;
+  }
+
+  .banner-content {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .banner-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .error-icon {
+    color: #c00;
+  }
+
+  .banner-text {
+    flex: 1;
+  }
+
+  .banner-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #c00;
+  }
+
+  .banner-message {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    color: #333;
+  }
+
+  .banner-details {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 12px;
+    color: #555;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .banner-details li {
+    margin-bottom: 4px;
+  }
+
+  .banner-details code {
+    background: #f5f5f5;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 11px;
+  }
+
+  .banner-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn-banner {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-banner.btn-primary {
+    background: #1a73e8;
+    color: #fff;
+  }
+
+  .btn-banner.btn-primary:hover {
+    background: #1557b0;
+  }
+
+  .btn-banner.btn-secondary {
+    background: #5f6368;
+    color: #fff;
+  }
+
+  .btn-banner.btn-secondary:hover {
+    background: #4a4e52;
+  }
+
+  .btn-banner.btn-link {
+    background: transparent;
+    color: #1a73e8;
+    text-decoration: underline;
+  }
+
+  .btn-banner.btn-link:hover {
+    color: #1557b0;
+  }
+
+  /* Warning Banner Styles */
+  .config-warning-banner {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 320px;
+    background: #fffbea;
+    border: 1px solid #cc9;
+    border-left: 4px solid #f90;
+    border-radius: 4px;
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 9998;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  .config-warning-banner.hidden {
+    display: none;
+  }
+
+  .warning-icon {
+    color: #f90;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .config-warning-banner .banner-message {
+    font-size: 12px;
+    color: #333;
+    margin: 0;
+    flex: 1;
+  }
+
+  .config-warning-banner .btn-banner {
+    flex-shrink: 0;
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* Animations */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .config-error-banner {
+      width: 95%;
+      top: 10px;
+    }
+
+    .config-warning-banner {
+      right: 10px;
+      left: 10px;
+      width: auto;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Show config error banner
+   * Called from server-side ErrorBoundary via google.script.run
+   */
+  function showConfigErrorBanner(errorData) {
+    const banner = document.getElementById('config-error-banner');
+    const messageEl = document.getElementById('config-error-message');
+    const detailsEl = document.getElementById('config-error-details');
+
+    if (!banner || !messageEl || !detailsEl) {
+      console.error('Config error banner elements not found');
+      return;
+    }
+
+    // Format error message
+    const configName = errorData.configName || 'configuration';
+    messageEl.textContent = `Failed to load ${configName}`;
+
+    // Show error details
+    const errors = errorData.errors || [];
+    detailsEl.innerHTML = errors.map(function(err) {
+      const severityClass = (err.severity || 'MEDIUM').toLowerCase();
+      const recoverableText = err.recoverable ? '(recoverable)' : '(non-recoverable)';
+      return '<li class="' + severityClass + '">' +
+        '<strong>[' + (err.severity || 'ERROR') + ']</strong> ' +
+        err.message +
+        ' <code>' + (err.code || 'UNKNOWN') + '</code> ' +
+        recoverableText +
+        '</li>';
+    }).join('');
+
+    // Show banner
+    banner.classList.remove('hidden');
+
+    // Store error data for retry
+    window.lastConfigError = errorData;
+  }
+
+  /**
+   * Show config warning banner
+   * Called from server-side ErrorBoundary via google.script.run
+   */
+  function showConfigWarningBanner(warningData) {
+    const banner = document.getElementById('config-warning-banner');
+    const messageEl = document.getElementById('config-warning-message');
+
+    if (!banner || !messageEl) {
+      console.error('Config warning banner elements not found');
+      return;
+    }
+
+    // Format warning
+    const configName = warningData.configName || 'configuration';
+    const source = warningData.source || 'fallback';
+    const warningCount = (warningData.warnings || []).length;
+
+    messageEl.textContent = configName + ' loaded from ' + source + ' (' + warningCount + ' warning' + (warningCount !== 1 ? 's' : '') + ')';
+
+    // Show banner
+    banner.classList.remove('hidden');
+
+    // Auto-dismiss after 10 seconds
+    setTimeout(function() {
+      banner.classList.add('hidden');
+    }, 10000);
+  }
+
+  /**
+   * Retry config load
+   */
+  function retryConfigLoad() {
+    const banner = document.getElementById('config-error-banner');
+    banner.classList.add('hidden');
+
+    // Show loading indicator
+    const statusBar = document.getElementById('status');
+    if (statusBar) {
+      statusBar.textContent = 'Reloading configuration...';
+    }
+
+    // Call server to reload config
+    google.script.run
+      .withSuccessHandler(function(result) {
+        if (statusBar) {
+          statusBar.textContent = 'Configuration reloaded successfully';
+        }
+        // Reload the page to refresh all data
+        setTimeout(function() {
+          window.location.reload();
+        }, 500);
+      })
+      .withFailureHandler(function(error) {
+        if (statusBar) {
+          statusBar.textContent = 'Reload failed: ' + error.message;
+        }
+        // Show error banner again
+        if (window.lastConfigError) {
+          showConfigErrorBanner(window.lastConfigError);
+        }
+      })
+      .reloadConfig();  // Server-side function to clear cache and reload
+  }
+
+  /**
+   * Dismiss error banner
+   */
+  function dismissErrorBanner() {
+    const banner = document.getElementById('config-error-banner');
+    banner.classList.add('hidden');
+  }
+
+  /**
+   * Use default config values
+   */
+  function useDefaultConfig() {
+    const banner = document.getElementById('config-error-banner');
+    banner.classList.add('hidden');
+
+    const statusBar = document.getElementById('status');
+    if (statusBar) {
+      statusBar.textContent = 'Using default configuration...';
+    }
+
+    // Note: This would need server-side implementation
+    // For now, just hide the banner and continue with degraded functionality
+    setTimeout(function() {
+      if (statusBar) {
+        statusBar.textContent = 'Running with limited configuration';
+      }
+    }, 1000);
+  }
+
+  /**
+   * Dismiss warning banner
+   */
+  function dismissWarningBanner() {
+    const banner = document.getElementById('config-warning-banner');
+    banner.classList.add('hidden');
+  }
+
+  // Attach event listeners when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachBannerListeners);
+  } else {
+    attachBannerListeners();
+  }
+
+  function attachBannerListeners() {
+    const retryBtn = document.getElementById('retry-config-btn');
+    const useDefaultsBtn = document.getElementById('use-defaults-btn');
+    const dismissErrorBtn = document.getElementById('dismiss-error-btn');
+    const dismissWarningBtn = document.getElementById('dismiss-warning-btn');
+
+    if (retryBtn) retryBtn.addEventListener('click', retryConfigLoad);
+    if (useDefaultsBtn) useDefaultsBtn.addEventListener('click', useDefaultConfig);
+    if (dismissErrorBtn) dismissErrorBtn.addEventListener('click', dismissErrorBanner);
+    if (dismissWarningBtn) dismissWarningBtn.addEventListener('click', dismissWarningBanner);
+  }
+</script>

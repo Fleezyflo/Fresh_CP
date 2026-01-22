@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: 'Google Sans', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #202124;
+      background: #f8f9fa;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      padding: 16px 20px;
+      background: #1a73e8;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 24px;
+    }
+    section {
+      margin-bottom: 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      padding: 16px;
+    }
+    section h2 {
+      font-size: 16px;
+      margin: 0 0 12px;
+      color: #1a73e8;
+    }
+    .filters {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .filters input[type="search"] {
+      padding: 8px 12px;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .category-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      border: 1px solid #dadce0;
+      border-radius: 20px;
+      padding: 6px 12px;
+      background: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .chip.active {
+      background: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    th, td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #eef1f4;
+      text-align: left;
+    }
+    th {
+      background: #f1f3f4;
+      font-weight: 600;
+    }
+    tbody tr:hover {
+      background: #f7f9fb;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #1a73e8;
+      color: #fff;
+      transition: background 0.2s ease;
+    }
+    button.secondary {
+      background: #5f6368;
+    }
+    button.outline {
+      background: #fff;
+      border: 1px solid #dadce0;
+      color: #1a73e8;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      resize: vertical;
+    }
+    .logs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      border: 1px solid #dadce0;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #fff;
+      cursor: pointer;
+      transition: border 0.2s ease;
+    }
+    .log-entry.active {
+      border-color: #1a73e8;
+      background: #e8f0fe;
+    }
+    .log-entry:hover {
+      border-color: #1a73e8;
+    }
+    .log-detail h3 {
+      margin-top: 0;
+      font-size: 14px;
+      color: #1a73e8;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-size: 10px;
+      background: #e8f0fe;
+      color: #1a73e8;
+    }
+    .badge-persona {
+      background: #f1f3f4;
+      color: #3c4043;
+    }
+    .note {
+      font-size: 11px;
+      color: #5f6368;
+    }
+    .badge-rate {
+      background: #e8f0fe;
+      color: #1a73e8;
+    }
+    .badge-hours {
+      background: #e6f4ea;
+      color: #188038;
+    }
+    .badge-rate-hours {
+      background: #fce8e6;
+      color: #d93025;
+    }
+    .badge-add {
+      background: #fef7e0;
+      color: #b06000;
+    }
+    .badge-remove {
+      background: #fde7f3;
+      color: #b80672;
+    }
+    .badge-default {
+      background: #eef1f4;
+      color: #3c4043;
+    }
+    .scope-contract-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      color: #5f6368;
+      margin: 12px 0 6px;
+    }
+    .scope-contract-meta span {
+      background: #e8f0fe;
+      color: #1a73e8;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+    .scope-contract-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .scope-contract-table th,
+    .scope-contract-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #eef1f4;
+      text-align: left;
+      vertical-align: top;
+    }
+    .scope-contract-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .scope-contract-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .scope-contract-badge.pending { background: #fef7e0; color: #b06000; }
+    .scope-contract-badge.approved { background: #e6f4ea; color: #188038; }
+    .scope-contract-badge.rejected { background: #fdecea; color: #d93025; }
+    .scope-contract-badge.internal { background: #fef7e0; color: #b06000; }
+    .contract-empty {
+      padding: 24px 12px;
+      text-align: center;
+      color: #5f6368;
+      font-size: 12px;
+      background: #fff;
+      border-radius: 10px;
+      border: 1px dashed #dadce0;
+    }
+    .contract-audit {
+      margin-top: 12px;
+      font-size: 11px;
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #e0e0e0;
+      max-height: 160px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .contract-audit .audit-entry {
+      border-bottom: 1px solid #eef1f4;
+      padding: 6px 0;
+    }
+    .contract-audit .audit-entry:last-child {
+      border-bottom: none;
+    }
+    .persona-toggle {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .persona-option {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border: 1px solid #dadce0;
+      border-radius: 999px;
+      background: #fff;
+      font-size: 11px;
+      color: #3c4043;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .persona-option input {
+      margin: 0;
+    }
+    .persona-option.active {
+      background: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
+    }
+    .persona-option.active input {
+      accent-color: #fff;
+    }
+    .scope-card {
+      border: 1px solid #dadce0;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+    .scope-card h4 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      color: #1f2933;
+    }
+    .scope-card ul {
+      padding-left: 16px;
+      margin: 6px 0;
+    }
+    .scope-card ul li {
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .option-row label {
+      font-size: 11px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #5f6368;
+      font-size: 12px;
+    }
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .small-text {
+      font-size: 11px;
+      color: #5f6368;
+    }
+    .toast {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a73e8;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>Scope Review Studio</header>
+    <div class="content">
+      <section>
+        <h2>Scope Selection</h2>
+        <div class="filters">
+          <input type="search" id="searchInput" placeholder="Search by code or name" />
+          <div class="category-chips" id="categoryChips"></div>
+          <div class="actions">
+            <button class="outline" id="selectAllBtn">Select Visible</button>
+            <button class="outline" id="clearSelectionBtn">Clear</button>
+            <button class="outline" id="selectByLogBtn">Select Last Reviewed</button>
+            <span class="small-text" id="selectionSummary">0 scopes selected</span>
+          </div>
+        </div>
+        <div style="max-height: 220px; overflow-y: auto; margin-top: 12px;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 28px;"><input type="checkbox" id="toggleAll" /></th>
+                <th>Scope</th>
+                <th>Category</th>
+                <th>Hours</th>
+                <th>Sell (AED)</th>
+                <th>Last Review</th>
+              </tr>
+            </thead>
+            <tbody id="scopeTableBody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top: 12px;">
+          <textarea id="reviewerNotes" placeholder="Optional reviewer notes to include in the prompt..."></textarea>
+        </div>
+        <div class="actions" style="justify-content: flex-end; margin-top: 12px;">
+          <button id="runReviewBtn">Run LLM Review</button>
+        </div>
+      </section>
+
+      <section id="contractSection">
+        <div class="flex-between">
+          <h2>Scope Contract</h2>
+          <button class="outline" id="refreshContractBtn">Refresh</button>
+        </div>
+        <div id="contractContainer" class="contract-empty">Loading scope contract…</div>
+      </section>
+
+      <section>
+        <div class="flex-between">
+          <h2>Recent Reviews</h2>
+          <button class="outline" id="refreshLogsBtn">Refresh</button>
+        </div>
+        <div class="logs-list" id="logsList"></div>
+        <div id="logDetail" class="log-detail" style="margin-top: 16px;"></div>
+      </section>
+    </div>
+  </div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const PERSONA_LABELS = {
+      seniorAgencyDirector: 'Agency Review Director',
+      commercialDirector: 'Commercial Director (legacy)',
+      deliveryLead: 'Delivery Lead (legacy)'
+    };
+    const DEFAULT_PERSONA_KEY = 'seniorAgencyDirector';
+
+    const state = {
+      scopes: [],
+      categories: [],
+      filteredScopes: [],
+      selectedScopes: new Set(),
+      activeCategories: new Set(),
+      logs: [],
+      activeLog: null,
+      searchTerm: ''
+    };
+
+    const elements = {
+      searchInput: document.getElementById('searchInput'),
+      categoryChips: document.getElementById('categoryChips'),
+      scopeTableBody: document.getElementById('scopeTableBody'),
+      toggleAll: document.getElementById('toggleAll'),
+      selectAllBtn: document.getElementById('selectAllBtn'),
+      clearSelectionBtn: document.getElementById('clearSelectionBtn'),
+      selectByLogBtn: document.getElementById('selectByLogBtn'),
+      selectionSummary: document.getElementById('selectionSummary'),
+      reviewerNotes: document.getElementById('reviewerNotes'),
+      runReviewBtn: document.getElementById('runReviewBtn'),
+      logsList: document.getElementById('logsList'),
+      logDetail: document.getElementById('logDetail'),
+      refreshLogsBtn: document.getElementById('refreshLogsBtn'),
+      contractContainer: document.getElementById('contractContainer'),
+      refreshContractBtn: document.getElementById('refreshContractBtn'),
+      toast: document.getElementById('toast')
+    };
+
+    const CHANGE_TYPE_STYLES = {
+      rate: { label: 'Rate', className: 'badge-rate' },
+      hours: { label: 'Hours', className: 'badge-hours' },
+      rate_hours: { label: 'Rate & Hours', className: 'badge-rate-hours' },
+      add: { label: 'Add', className: 'badge-add', extraNote: 'Manual addition required.' },
+      remove: { label: 'Remove', className: 'badge-remove' }
+    };
+
+    function escapeHtml(text) {
+      if (text === null || text === undefined) {
+        return '';
+      }
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getChangeTypeMeta(changeType) {
+      const normalized = (changeType || '').toLowerCase();
+      const style = CHANGE_TYPE_STYLES[normalized];
+      if (style) {
+        return {
+          label: style.label,
+          className: style.className || 'badge-default',
+          extraNote: style.extraNote || ''
+        };
+      }
+      if (!normalized) {
+        return { label: '', className: 'badge-default', extraNote: '' };
+      }
+      const label = normalized
+        .split('_')
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+      return { label: label, className: 'badge-default', extraNote: '' };
+    }
+
+    function renderAdjustmentListItem(item) {
+      if (!item || typeof item !== 'object') {
+        return '';
+      }
+      const meta = getChangeTypeMeta(item.changeType);
+      const badge = meta.label ? `<span class="badge ${meta.className}">${escapeHtml(meta.label)}</span>` : '';
+      const codeLabel = item.resourceCode || item.resourceName || '(new resource)';
+      const hours = item.recommendedHours !== undefined && item.recommendedHours !== null ? `${item.recommendedHours}h` : '—';
+      const rate = item.recommendedRate !== undefined && item.recommendedRate !== null ? `${item.recommendedRate} AED/hr` : '—';
+      const noteParts = [];
+      if (item.notes) {
+        noteParts.push(item.notes);
+      }
+      if (meta.extraNote) {
+        noteParts.push(meta.extraNote);
+      }
+      const noteHtml = noteParts.length ? `<br>${noteParts.map(text => `<span class="note">${escapeHtml(text)}</span>`).join('<br>')}` : '';
+      return `<li>${badge} <strong>${escapeHtml(codeLabel)}</strong>: ${escapeHtml(hours)} @ ${escapeHtml(rate)}${noteHtml}</li>`;
+    }
+
+    function renderPersonaBadge(label) {
+      if (!label) {
+        return '';
+      }
+      return `<span class="badge badge-persona">${escapeHtml(label)}</span>`;
+    }
+
+    function renderPersonaLabelFallback(personaKey) {
+      if (personaKey && PERSONA_LABELS[personaKey]) {
+        return PERSONA_LABELS[personaKey];
+      }
+      return PERSONA_LABELS[DEFAULT_PERSONA_KEY] || '';
+    }
+
+  function renderContractStatusBadge(status) {
+    const normalized = (status || 'pending').toLowerCase();
+    if (normalized === 'approved') {
+      return '<span class="scope-contract-badge approved">Approved</span>';
+      }
+      if (normalized === 'rejected') {
+        return '<span class="scope-contract-badge rejected">Rejected</span>';
+      }
+      return '<span class="scope-contract-badge pending">' + escapeHtml(normalized) + '</span>';
+    }
+
+    function formatDeliverablePreview(list) {
+      if (!Array.isArray(list) || list.length === 0) {
+        return '—';
+      }
+      const trimmed = list.filter(Boolean);
+      if (trimmed.length <= 4) {
+        return trimmed.join(', ');
+      }
+      return trimmed.slice(0, 4).join(', ') + ' +' + (trimmed.length - 4);
+    }
+
+    function formatResourcePreview(resources) {
+      if (!Array.isArray(resources) || resources.length === 0) {
+        return '—';
+      }
+      return resources.map(resource => {
+        if (!resource) {
+          return '';
+        }
+        const parts = [];
+        if (resource.role) {
+          parts.push(resource.role);
+        }
+        if (resource.hours) {
+          parts.push(resource.hours + 'h');
+        }
+        if (resource.internal) {
+          parts.push('internal');
+        }
+    return parts.join(' · ');
+  }).filter(Boolean).join('\n');
+}
+
+function renderSectionedContract(contract, briefType) {
+  const entries = Array.isArray(contract && contract.entries) ? contract.entries : [];
+  const sections = entries.filter(entry => entry && entry.isSection);
+  const children = entries.filter(entry => entry && !entry.isSection);
+  const config = contract && contract.categoryConfig && contract.categoryConfig[briefType]
+    ? contract.categoryConfig[briefType]
+    : null;
+  const configuredPhases = config && Array.isArray(config.phases) ? config.phases : [];
+  const parentLookup = {};
+  sections.forEach(section => {
+    const key = (section.id || section.sectionId || section.canonical || section.scopeLabel || '').toString().toLowerCase();
+    if (key) {
+      parentLookup[key] = section;
+    }
+    const canonical = section.metadata && section.metadata.sectionCanonical ? section.metadata.sectionCanonical.toString().toLowerCase() : '';
+    if (canonical && !parentLookup[canonical]) {
+      parentLookup[canonical] = section;
+    }
+  });
+  let parents = sections.slice();
+  if (!parents.length && Array.isArray(contract.sections) && contract.sections.length) {
+    contract.sections.forEach((section, idx) => {
+      const id = section.id || section.sectionId || section.canonical || ('section-' + (idx + 1));
+      parents.push({
+        id: id,
+        sectionId: id,
+        scopeLabel: section.label || section.canonical || id,
+        isSection: true,
+        metadata: {
+          sectionCanonical: section.canonical || id
+        }
+      });
+    });
+  }
+  if (!parents.length && entries.length) {
+    const sectionIds = Array.from(new Set(entries.map(entry => (entry.sectionId || entry.canonical || entry.scopeLabel || '').toString().toLowerCase()).filter(Boolean)));
+    parents = sectionIds.map((sectionId, idx) => {
+      const phase = configuredPhases.find(phase => {
+        const normalized = (phase.canonical || phase.id || phase.label || '').toString().toLowerCase();
+        return normalized === sectionId;
+      });
+      const label = phase ? (phase.label || phase.canonical || phase.id) : sectionId;
+      return {
+        id: phase && phase.id ? phase.id : ('section-' + (idx + 1)),
+        sectionId: phase && phase.id ? phase.id : sectionId,
+        scopeLabel: label,
+        isSection: true,
+        metadata: {
+          sectionCanonical: phase && phase.canonical ? phase.canonical : sectionId
+        }
+      };
+    });
+  }
+  if (configuredPhases.length) {
+    const presentCanonicals = new Set(parents.map(parent => (parent.metadata && parent.metadata.sectionCanonical ? parent.metadata.sectionCanonical : (parent.sectionId || parent.id || parent.scopeLabel || '')).toString().toLowerCase()));
+    configuredPhases.forEach((phase, index) => {
+      const canonical = (phase.canonical || phase.id || phase.label || '').toString().toLowerCase();
+      if (canonical && !presentCanonicals.has(canonical)) {
+        presentCanonicals.add(canonical);
+        parents.push({
+          id: phase.id || phase.canonical || ('section-missing-' + (index + 1)),
+          sectionId: phase.id || phase.canonical || ('section-missing-' + (index + 1)),
+          scopeLabel: (phase.label || phase.canonical || phase.id || 'Missing Phase') + ' (missing in contract)',
+          isSection: true,
+          metadata: {
+            sectionCanonical: phase.canonical || phase.id || '',
+            missing: true
+          }
+        });
+      }
+    });
+  }
+  const hierarchy = contract && contract.hierarchy ? contract.hierarchy : {};
+  const childMap = {};
+  children.forEach(child => {
+    if (child && child.id) {
+      childMap[child.id] = child;
+    }
+  });
+  let rows = '';
+  const matchedChildren = new Set();
+  parents.forEach(parent => {
+    if (!parent || !parent.id) {
+      return;
+    }
+    const parentKey = (parent.sectionId || parent.id || '').toString().toLowerCase();
+    const parentCanonical = parent.metadata && parent.metadata.sectionCanonical
+      ? parent.metadata.sectionCanonical.toString().toLowerCase()
+      : parentKey;
+    const childCandidates = Array.isArray(hierarchy[parent.id]) && hierarchy[parent.id].length
+      ? hierarchy[parent.id].map(id => childMap[id]).filter(Boolean)
+      : children.filter(child => {
+          const childSection = (child.sectionId || '').toString().toLowerCase();
+          const childCanonical = child.metadata && child.metadata.sectionCanonical
+            ? child.metadata.sectionCanonical.toString().toLowerCase()
+            : '';
+          return (childSection && (childSection === parentKey || childSection === parentCanonical))
+            || (childCanonical && (childCanonical === parentCanonical || childCanonical === parentKey));
+        });
+    childCandidates.forEach(child => matchedChildren.add(child.id));
+    const childItems = childCandidates.map(child => {
+      const visibility = (child.visibility || 'Client').toLowerCase();
+      const status = (child.approvalStatus || 'pending').toLowerCase();
+      return '<li><strong>' + escapeHtml(child.scopeLabel || child.id) + '</strong> — ' +
+        escapeHtml(formatDeliverablePreview(child.deliverables)) +
+        ' <span class="scope-contract-badge ' + escapeHtml(status) + '">' + escapeHtml(status) + '</span> ' +
+        (visibility === 'internal' ? '<span class="scope-contract-badge internal">Internal</span>' : '') +
+        '</li>';
+    });
+    const requirements = childItems.length ? '<ul>' + childItems.join('') + '</ul>' : '<span class="small-text muted">No requirements identified.</span>';
+    rows += '<tr>' +
+      '<td><strong>' + escapeHtml(parent.scopeLabel || parent.sectionId || parent.id) + '</strong></td>' +
+      '<td>' + escapeHtml(parent.visibility || 'Client') + '</td>' +
+      '<td>' + renderContractStatusBadge(parent.approvalStatus || 'pending') + '</td>' +
+      '<td>' + requirements + '</td>' +
+      '</tr>';
+  });
+  const orphanChildren = children.filter(child => child && child.id && !matchedChildren.has(child.id));
+  if (orphanChildren.length) {
+    orphanChildren.forEach(child => {
+      const visibility = (child.visibility || 'Client').toLowerCase();
+      const status = (child.approvalStatus || 'pending').toLowerCase();
+      rows += '<tr>' +
+        '<td><strong>' + escapeHtml(child.scopeLabel || child.id) + '</strong></td>' +
+        '<td>' + (visibility === 'internal' ? '<span class="scope-contract-badge internal">Internal</span>' : 'Client') + '</td>' +
+        '<td>' + renderContractStatusBadge(status) + '</td>' +
+        '<td><span class="small-text muted">Orphaned requirement — parent section missing</span></td>' +
+        '</tr>';
+    });
+  }
+  if (!rows) {
+    return '';
+  }
+  return '<table class="scope-contract-table"><thead><tr><th>Section</th><th>Visibility</th><th>Status</th><th>Requirements</th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+    function renderContractOverview(result) {
+      const container = elements.contractContainer;
+      if (!container) {
+        return;
+      }
+      if (!result || !result.ok) {
+        container.className = 'contract-empty';
+        container.innerHTML = escapeHtml((result && result.message) || 'No approved scope snapshot yet. Approve a scope via the AI Quote Builder.');
+        return;
+      }
+
+      container.className = '';
+      const contract = result.contract || {};
+      const snapshot = result.snapshot || {};
+      const briefType = snapshot && snapshot.briefType ? snapshot.briefType : (contract && contract.briefType ? contract.briefType : '');
+      const categoryConfig = result.categoryConfig || {};
+      const enrichedContract = Object.assign({}, contract, { categoryConfig: categoryConfig });
+      const audit = Array.isArray(result.audit) ? result.audit : [];
+
+      let html = '<div class="scope-contract-meta">';
+      if (contract.version) {
+        html += '<span>Version ' + escapeHtml(contract.version) + '</span>';
+      }
+      if (contract.contractHash) {
+        html += '<span>Hash ' + escapeHtml(contract.contractHash.substring(0, 10)) + '…</span>';
+      }
+      html += '<span>' + (contract.entries ? contract.entries.length : 0) + ' entries</span>';
+      if (snapshot.createdAt) {
+        html += '<span>Approved ' + escapeHtml(new Date(snapshot.createdAt).toLocaleString()) + '</span>';
+      }
+      if (snapshot.createdBy) {
+        html += '<span>By ' + escapeHtml(snapshot.createdBy) + '</span>';
+      }
+      if (briefType) {
+        html += '<span>Brief Type ' + escapeHtml(briefType) + '</span>';
+      }
+      html += '</div>';
+
+      const sectioned = renderSectionedContract(enrichedContract, briefType);
+      if (sectioned) {
+        html += sectioned;
+      } else if (contract.entries && contract.entries.length) {
+        html += '<table class="scope-contract-table"><thead><tr>' +
+          '<th>Entry</th>' +
+          '<th>Visibility</th>' +
+          '<th>Status</th>' +
+          '<th>Deliverables</th>' +
+          '<th>Resources</th>' +
+          '</tr></thead><tbody>';
+        contract.entries.forEach(entry => {
+          const visibility = (entry.visibility || 'Client').toLowerCase();
+          const status = (entry.approvalStatus || 'pending').toLowerCase();
+          html += '<tr>' +
+            '<td><strong>' + escapeHtml(entry.scopeLabel || entry.sectionId || entry.id) + '</strong><div style="color:#5f6368;font-size:11px;">' + escapeHtml(entry.id || '') + '</div></td>' +
+            '<td>' + (visibility === 'internal' ? '<span class="scope-contract-badge internal">Internal</span>' : 'Client') + '</td>' +
+            '<td>' + renderContractStatusBadge(status) + '</td>' +
+            '<td>' + escapeHtml(formatDeliverablePreview(entry.deliverables)) + '</td>' +
+            '<td>' + escapeHtml(formatResourcePreview(entry.resources)).replace(/\n/g, '<br>') + '</td>' +
+            '</tr>';
+        });
+        html += '</tbody></table>';
+      } else {
+        html += '<div class="contract-empty">No scope entries captured yet. Approve a scope via the AI Quote Builder.</div>';
+      }
+
+      if (audit.length) {
+        html += '<div class="contract-audit">';
+        audit.forEach(entry => {
+          html += '<div class="audit-entry">' +
+            '<strong>' + escapeHtml(entry.event || '') + '</strong>' +
+            '<div>' + escapeHtml(entry.timestamp || '') + '</div>' +
+            '<div>' + escapeHtml(entry.summary || '') + '</div>' +
+            '</div>';
+        });
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    function fetchContractOverview() {
+      if (elements.refreshContractBtn) {
+        setLoading(elements.refreshContractBtn, true, 'Refreshing…');
+      }
+      google.script.run
+        .withSuccessHandler(result => {
+          if (elements.refreshContractBtn) {
+            setLoading(elements.refreshContractBtn, false);
+          }
+          renderContractOverview(result);
+        })
+        .withFailureHandler(error => {
+          if (elements.refreshContractBtn) {
+            setLoading(elements.refreshContractBtn, false);
+          }
+          const container = elements.contractContainer;
+          if (container) {
+            container.className = 'contract-empty';
+            container.innerHTML = escapeHtml(error && error.message ? error.message : 'Unable to load scope contract.');
+          }
+        })
+        .getScopeContractOverview();
+    }
+
+    function showToast(message, variant = 'info') {
+      elements.toast.textContent = message;
+      elements.toast.style.background = variant === 'error' ? '#d93025' : (variant === 'success' ? '#188038' : '#1a73e8');
+      elements.toast.classList.add('show');
+      setTimeout(() => elements.toast.classList.remove('show'), 3500);
+    }
+
+    function setLoading(button, isLoading, label) {
+      if (!button) return;
+      if (isLoading) {
+        button.dataset.originalText = button.textContent;
+        button.textContent = label || 'Working…';
+        button.disabled = true;
+      } else {
+        button.textContent = button.dataset.originalText || button.textContent;
+        button.disabled = false;
+      }
+    }
+
+    function fetchCatalog() {
+      google.script.run.withSuccessHandler(data => {
+        state.scopes = data.scopes || [];
+        state.categories = data.categories || [];
+        state.filteredScopes = state.scopes.slice();
+        renderCategories();
+        renderScopes();
+        updateSelectionSummary();
+      }).withFailureHandler(error => {
+        showToast(error.message || 'Failed to load scopes', 'error');
+      }).scopeReviewGetCatalogData();
+    }
+
+    function fetchLogs() {
+      google.script.run.withSuccessHandler(logs => {
+        state.logs = logs || [];
+        renderLogs();
+      }).withFailureHandler(error => {
+        showToast(error.message || 'Failed to load logs', 'error');
+      }).scopeReviewListLogs(25);
+    }
+
+    function renderCategories() {
+      elements.categoryChips.innerHTML = '';
+      const allChip = document.createElement('div');
+      allChip.className = 'chip' + (state.activeCategories.size === 0 ? ' active' : '');
+      allChip.textContent = 'All (' + state.scopes.length + ')';
+      allChip.onclick = () => {
+        state.activeCategories.clear();
+        renderCategories();
+        renderScopes();
+      };
+      elements.categoryChips.appendChild(allChip);
+
+      state.categories.forEach(cat => {
+        const chip = document.createElement('div');
+        chip.className = 'chip' + (state.activeCategories.has(cat.id) ? ' active' : '');
+        chip.textContent = cat.label + ' (' + cat.count + ')';
+        chip.onclick = () => {
+          if (state.activeCategories.has(cat.id)) {
+            state.activeCategories.delete(cat.id);
+          } else {
+            state.activeCategories.add(cat.id);
+          }
+          renderCategories();
+          renderScopes();
+        };
+        elements.categoryChips.appendChild(chip);
+      });
+    }
+
+    function renderScopes() {
+      const term = state.searchTerm.trim().toLowerCase();
+      state.filteredScopes = state.scopes.filter(scope => {
+        const matchesCategory = state.activeCategories.size === 0 || state.activeCategories.has(scope.category || 'General');
+        const matchesSearch = !term || scope.code.toLowerCase().includes(term) || scope.name.toLowerCase().includes(term);
+        return matchesCategory && matchesSearch;
+      });
+
+      elements.scopeTableBody.innerHTML = '';
+      if (state.filteredScopes.length === 0) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 6;
+        cell.innerHTML = '<div class="empty-state">No scopes match the current filters.</div>';
+        row.appendChild(cell);
+        elements.scopeTableBody.appendChild(row);
+        return;
+      }
+
+      state.filteredScopes.forEach(scope => {
+        const row = document.createElement('tr');
+        const checkboxCell = document.createElement('td');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = state.selectedScopes.has(scope.code);
+        checkbox.onchange = () => {
+          if (checkbox.checked) {
+            state.selectedScopes.add(scope.code);
+          } else {
+            state.selectedScopes.delete(scope.code);
+          }
+          updateSelectionSummary();
+        };
+        checkboxCell.appendChild(checkbox);
+        row.appendChild(checkboxCell);
+
+        const nameCell = document.createElement('td');
+        const scopeCode = escapeHtml(scope.code || '');
+        const scopeName = escapeHtml(scope.name || '');
+        nameCell.innerHTML = '<strong>' + scopeCode + '</strong><br><span class="small-text">' + scopeName + '</span>';
+        row.appendChild(nameCell);
+
+        const catCell = document.createElement('td');
+        catCell.textContent = scope.category || 'General';
+        row.appendChild(catCell);
+
+        const hoursCell = document.createElement('td');
+        hoursCell.textContent = scope.totalHours;
+        row.appendChild(hoursCell);
+
+        const sellCell = document.createElement('td');
+        sellCell.textContent = scope.totalSell;
+        row.appendChild(sellCell);
+
+        const statusCell = document.createElement('td');
+        if (scope.lastReviewLogId) {
+          const badge = document.createElement('span');
+          badge.className = 'badge';
+          badge.textContent = scope.lastReviewLogId;
+          statusCell.appendChild(badge);
+          if (scope.lastReviewTimestamp) {
+            const note = document.createElement('div');
+            note.className = 'note';
+            note.textContent = new Date(scope.lastReviewTimestamp).toLocaleString();
+            statusCell.appendChild(note);
+          }
+        } else {
+          statusCell.innerHTML = '<span class="note">Not reviewed</span>';
+        }
+        row.appendChild(statusCell);
+
+        elements.scopeTableBody.appendChild(row);
+      });
+    }
+
+    function updateSelectionSummary() {
+      elements.selectionSummary.textContent = state.selectedScopes.size + ' scope(s) selected';
+      elements.toggleAll.checked = state.filteredScopes.length > 0 && state.filteredScopes.every(scope => state.selectedScopes.has(scope.code));
+    }
+
+    function renderLogs() {
+      elements.logsList.innerHTML = '';
+      if (!state.logs.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = 'No review runs yet. Run the LLM once you select scopes.';
+        elements.logsList.appendChild(empty);
+        return;
+      }
+      state.logs.forEach(log => {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry' + (state.activeLog && state.activeLog.logId === log.logId ? ' active' : '');
+        const personaBadge = renderPersonaBadge(log.personaLabel || renderPersonaLabelFallback(log.persona));
+        const logId = escapeHtml(log.logId || '');
+        const scopeCountLabel = escapeHtml(String(log.scopeCount || 0));
+        const timestampLabel = escapeHtml(new Date(log.timestamp).toLocaleString());
+        entry.innerHTML = `
+          <div class="flex-between" style="gap:8px;">
+            <div><strong>${logId}</strong> · ${scopeCountLabel} scope(s)</div>
+            ${personaBadge}
+          </div>
+          <div class="note">${timestampLabel}</div>
+        `;
+        entry.onclick = () => loadLogDetail(log.logId);
+        elements.logsList.appendChild(entry);
+      });
+    }
+
+    function loadLogDetail(logId) {
+      google.script.run.withSuccessHandler(log => {
+        state.activeLog = log;
+        renderLogs();
+        renderLogDetail();
+      }).withFailureHandler(error => {
+        showToast(error.message || 'Failed to load log', 'error');
+      }).scopeReviewGetLog(logId);
+    }
+
+    function renderLogDetail() {
+      const container = elements.logDetail;
+      container.innerHTML = '';
+      const log = state.activeLog;
+      if (!log) {
+        container.innerHTML = '<div class="empty-state">Select a review run to inspect the results.</div>';
+        return;
+      }
+
+      const header = document.createElement('div');
+      const personaBadge = renderPersonaBadge(log.personaLabel || renderPersonaLabelFallback(log.persona));
+      const logIdLabel = escapeHtml(log.logId || '');
+      const timestampLabel = escapeHtml(new Date(log.timestamp).toLocaleString());
+      const scopeCountLabel = escapeHtml(String(log.scopeCount || 0));
+      header.innerHTML = `
+        <div class="flex-between" style="gap:8px; align-items:center;">
+          <h3>${logIdLabel}</h3>
+          ${personaBadge}
+        </div>
+        <div class="note">${timestampLabel} · ${scopeCountLabel} scope(s)</div>
+      `;
+      container.appendChild(header);
+
+      if (log.response && Array.isArray(log.response.globalNotes) && log.response.globalNotes.length) {
+        const globalBox = document.createElement('div');
+        globalBox.className = 'scope-card';
+        const listItems = log.response.globalNotes.map(note => `<li>${escapeHtml(note)}</li>`).join('');
+        globalBox.innerHTML = `
+          <strong>Global Notes</strong>
+          <ul>${listItems}</ul>
+        `;
+        container.appendChild(globalBox);
+      }
+
+      const notesBox = document.createElement('div');
+      notesBox.className = 'scope-card';
+      const reviewerNotes = escapeHtml(log.reviewerNotes || '');
+      notesBox.innerHTML = `
+        <strong>Reviewer Notes</strong>
+        <textarea id="logNotes" placeholder="Add reviewer notes to this run...">${reviewerNotes}</textarea>
+        <div class="option-row" style="justify-content: flex-end;">
+          <button class="outline secondary" id="saveLogNotesBtn">Save Notes</button>
+        </div>
+      `;
+      container.appendChild(notesBox);
+      document.getElementById('saveLogNotesBtn').onclick = () => saveLogNotes(log.logId);
+
+      const rerunBox = document.createElement('div');
+      rerunBox.className = 'scope-card';
+      rerunBox.innerHTML = `
+        <strong>Refine & Rerun</strong>
+        <textarea id="rerunNotes" placeholder="Add extra guidance for the next iteration..."></textarea>
+        <div class="option-row" style="justify-content:flex-end;">
+          <button class="outline" id="rerunBtn">Rerun With Notes</button>
+        </div>
+      `;
+      container.appendChild(rerunBox);
+      document.getElementById('rerunBtn').onclick = () => rerunLog(log.logId);
+
+      if (log.response && Array.isArray(log.response.scopes)) {
+        log.response.scopes.forEach(scope => {
+          const card = document.createElement('div');
+          card.className = 'scope-card';
+          const adjustments = scope.resourceAdjustments || [];
+          const adjustmentsList = adjustments.length
+            ? `<ul>${adjustments.map(renderAdjustmentListItem).filter(Boolean).join('')}</ul>`
+            : '<div class="note">No resource adjustments suggested.</div>';
+
+          const risksList = (scope.risks && scope.risks.length)
+            ? `<ul>${scope.risks.map(risk => `<li>${escapeHtml(risk)}</li>`).join('')}</ul>`
+            : '<div class="note">No explicit risks captured.</div>';
+
+          const scopeCode = escapeHtml(scope.scopeCode || '');
+          const clientSummary = escapeHtml(scope.clientCopy && scope.clientCopy.summary ? scope.clientCopy.summary : '');
+          const pricingStatus = escapeHtml((scope.pricing && scope.pricing.status ? scope.pricing.status.toUpperCase() : 'OK'));
+          const pricingNotes = escapeHtml(scope.pricing && scope.pricing.notes ? scope.pricing.notes : 'No pricing notes');
+          const hoursNotes = escapeHtml(scope.hours && scope.hours.notes ? scope.hours.notes : 'No hour notes');
+          const clientBullets = scope.clientCopy && Array.isArray(scope.clientCopy.bullets)
+            ? scope.clientCopy.bullets.map(b => `<li>${escapeHtml(b)}</li>`).join('')
+            : '';
+          const scopeAttr = escapeHtml(scope.scopeCode || '');
+
+          card.innerHTML = `
+            <div class="flex-between">
+              <h4>${scopeCode} · ${clientSummary}</h4>
+              <span class="badge">${pricingStatus}</span>
+            </div>
+            <div class="note" style="margin-bottom:6px;">Pricing: ${pricingNotes}</div>
+            <div class="note" style="margin-bottom:6px;">Hours: ${hoursNotes}</div>
+            <strong>Client Bullets</strong>
+            <ul>${clientBullets}</ul>
+            <strong>Resource Adjustments</strong>
+            ${adjustmentsList}
+            <strong>Risks</strong>
+            ${risksList}
+            <div class="option-row">
+              <label><input type="checkbox" class="apply-option" data-option="hours" checked /> Apply Hours</label>
+              <label><input type="checkbox" class="apply-option" data-option="rates" checked /> Apply Rates</label>
+              <label><input type="checkbox" class="apply-option" data-option="pricing" checked /> Apply Pricing</label>
+            </div>
+            <textarea class="apply-notes" placeholder="Optional note when applying changes..."></textarea>
+            <div class="option-row" style="justify-content:flex-end;">
+              <button class="outline" data-scope="${scopeAttr}">Apply to Sheet</button>
+            </div>
+          `;
+
+          const applyBtn = card.querySelector('button[data-scope]');
+          applyBtn.onclick = () => {
+            const scopeCode = applyBtn.dataset.scope;
+            const options = {
+              applyHours: card.querySelector('input[data-option="hours"]').checked,
+              applyRates: card.querySelector('input[data-option="rates"]').checked,
+              applyPricing: card.querySelector('input[data-option="pricing"]').checked,
+              notes: card.querySelector('.apply-notes').value
+            };
+            applyAdjustments(log.logId, scopeCode, options);
+          };
+
+          container.appendChild(card);
+        });
+      }
+    }
+
+    function saveLogNotes(logId) {
+      const button = document.getElementById('saveLogNotesBtn');
+      const notes = document.getElementById('logNotes').value;
+      setLoading(button, true, 'Saving…');
+      google.script.run.withSuccessHandler(() => {
+        setLoading(button, false);
+        showToast('Reviewer notes updated', 'success');
+        fetchLogs();
+      }).withFailureHandler(error => {
+        setLoading(button, false);
+        showToast(error.message || 'Failed to save notes', 'error');
+      }).scopeReviewUpdateNotes(logId, notes);
+    }
+
+    function rerunLog(logId) {
+      const btn = document.getElementById('rerunBtn');
+      setLoading(btn, true, 'Submitting…');
+      const instructions = document.getElementById('rerunNotes').value;
+      google.script.run.withSuccessHandler(result => {
+        showToast('LLM rerun submitted (' + result.logId + ')', 'success');
+        fetchLogs();
+        fetchCatalog();
+        setLoading(btn, false);
+      }).withFailureHandler(error => {
+        setLoading(btn, false);
+        showToast(error.message || 'Failed to rerun review', 'error');
+      }).scopeReviewRerun(logId, instructions);
+    }
+
+    function applyAdjustments(logId, scopeCode, options) {
+      const button = document.querySelector(`button[data-scope="${scopeCode}"]`);
+      const scopeData = state.activeLog && state.activeLog.response && Array.isArray(state.activeLog.response.scopes)
+        ? state.activeLog.response.scopes.find(entry => entry.scopeCode === scopeCode)
+        : null;
+      if (scopeData && Array.isArray(scopeData.resourceAdjustments)) {
+        const hasAdditions = scopeData.resourceAdjustments.some(adj => (adj.changeType || '').toLowerCase() === 'add');
+        if (hasAdditions) {
+          showToast('New resource additions must be handled manually. Applying other changes.', 'info');
+        }
+      }
+      setLoading(button, true, 'Applying…');
+      google.script.run.withSuccessHandler(result => {
+        showToast('Applied adjustments to ' + scopeCode, 'success');
+        fetchCatalog();
+        loadLogDetail(logId);
+        setLoading(button, false);
+      }).withFailureHandler(error => {
+        setLoading(button, false);
+        showToast(error.message || 'Failed to apply adjustments', 'error');
+      }).scopeReviewApplyAdjustments(logId, scopeCode, options);
+    }
+
+    function runReview() {
+      if (state.selectedScopes.size === 0) {
+        showToast('Select at least one scope to review', 'error');
+        return;
+      }
+      const btn = elements.runReviewBtn;
+      setLoading(btn, true, 'Submitting…');
+      const scopes = Array.from(state.selectedScopes);
+      const notes = elements.reviewerNotes.value;
+      const reviewRequest = {
+        notes: notes
+      };
+      google.script.run.withSuccessHandler(result => {
+        showToast('LLM review submitted (' + result.logId + ')', 'success');
+        state.selectedScopes.clear();
+        elements.reviewerNotes.value = '';
+        updateSelectionSummary();
+        fetchLogs();
+        setLoading(btn, false);
+      }).withFailureHandler(error => {
+        setLoading(btn, false);
+        showToast(error.message || 'Failed to run review', 'error');
+      }).scopeReviewRun(scopes, reviewRequest);
+    }
+
+    function saveSelectionFromLastLog() {
+      if (!state.logs.length) {
+        showToast('No logs available yet', 'error');
+        return;
+      }
+      state.selectedScopes.clear();
+      const latest = state.logs[0];
+      if (!latest || !Array.isArray(latest.scopeCodes) || !latest.scopeCodes.length) {
+        showToast('Latest review did not capture scope codes', 'error');
+        renderScopes();
+        updateSelectionSummary();
+        return;
+      }
+      latest.scopeCodes.forEach(code => state.selectedScopes.add(code));
+      renderScopes();
+      updateSelectionSummary();
+    }
+
+    elements.searchInput.addEventListener('input', event => {
+      state.searchTerm = event.target.value;
+      renderScopes();
+    });
+
+    elements.toggleAll.addEventListener('change', event => {
+      const checked = event.target.checked;
+      state.filteredScopes.forEach(scope => {
+        if (checked) {
+          state.selectedScopes.add(scope.code);
+        } else {
+          state.selectedScopes.delete(scope.code);
+        }
+      });
+      renderScopes();
+      updateSelectionSummary();
+    });
+
+    elements.selectAllBtn.addEventListener('click', () => {
+      state.filteredScopes.forEach(scope => state.selectedScopes.add(scope.code));
+      renderScopes();
+      updateSelectionSummary();
+    });
+
+    elements.clearSelectionBtn.addEventListener('click', () => {
+      state.selectedScopes.clear();
+      renderScopes();
+      updateSelectionSummary();
+    });
+
+    elements.selectByLogBtn.addEventListener('click', saveSelectionFromLastLog);
+    elements.runReviewBtn.addEventListener('click', runReview);
+    elements.refreshLogsBtn.addEventListener('click', fetchLogs);
+
+    function init() {
+      fetchCatalog();
+      fetchLogs();
+    }
+
+    init();
+  </script>
+</body>
+</html>

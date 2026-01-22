@@ -1,0 +1,15 @@
+# Ignore test files - clasp uses glob patterns relative to rootDir
+tests/
+*.test.js
+
+# Ignore node_modules if present
+node_modules/
+
+# Ignore documentation
+*.md
+
+# Ignore config files
+.claspignore
+
+# Ignore other non-code files
+.DS_Store

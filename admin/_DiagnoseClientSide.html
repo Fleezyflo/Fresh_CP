@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+</head>
+<body>
+  <h2>Client-Side Diagnostic</h2>
+  <button onclick="runDiagnostic()">Run Diagnostic</button>
+  <pre id="output"></pre>
+
+  <script>
+    function log(msg) {
+      const output = document.getElementById('output');
+      output.textContent += msg + '\n';
+      console.log(msg);
+    }
+
+    function runDiagnostic() {
+      document.getElementById('output').textContent = '';
+      log('═══════════════════════════════════════');
+      log('CLIENT-SIDE DIAGNOSTIC');
+      log('═══════════════════════════════════════\n');
+
+      log('1. Calling getScopeCategoryUiData()...');
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          log('✅ SUCCESS - Server returned response\n');
+
+          log('2. Response structure:');
+          log('   enabled: ' + response.enabled);
+          log('   config type: ' + typeof response.config);
+          log('   config is object: ' + (response.config && typeof response.config === 'object'));
+
+          if (response.config) {
+            const keys = Object.keys(response.config);
+            log('   config keys (' + keys.length + '): ' + keys.join(', '));
+
+            log('\n3. Checking smm-retainer:');
+            const smmConfig = response.config['smm-retainer'];
+            if (smmConfig) {
+              log('   ✅ smm-retainer found');
+              log('   phases: ' + (smmConfig.phases ? smmConfig.phases.length : 0));
+              if (smmConfig.phases && smmConfig.phases.length > 0) {
+                log('   First phase: ' + JSON.stringify(smmConfig.phases[0]));
+              }
+            } else {
+              log('   ❌ smm-retainer NOT found');
+              log('   Available keys: ' + keys.join(', '));
+            }
+          } else {
+            log('   ❌ config is null/undefined');
+          }
+
+          log('\n4. Hashes:');
+          if (response.hashes) {
+            const hashKeys = Object.keys(response.hashes);
+            log('   Hash keys: ' + hashKeys.join(', '));
+          }
+
+          log('\n═══════════════════════════════════════');
+          log('DIAGNOSTIC COMPLETE');
+          log('═══════════════════════════════════════');
+        })
+        .withFailureHandler(function(error) {
+          log('❌ FAILURE - Server call failed\n');
+          log('Error message: ' + error.message);
+          log('Error: ' + error);
+          log('\nThis means getScopeCategoryUiData() threw an exception');
+          log('Check server logs for details');
+        })
+        .getScopeCategoryUiData();
+    }
+  </script>
+</body>
+</html>
