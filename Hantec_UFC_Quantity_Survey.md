@@ -6,9 +6,11 @@
 **Date:** 23 June 2026
 **Sources:** `Hantec_UFC_ProductionBrief.pdf` + email thread incl. the 23 Jun Q&A
 
-> **Approach.** Three films, shot together over three days in Dubai. For each film we build **one finished master** (the 30s hero — edited, graded, mixed, scored, EN VO). Every other deliverable — the vertical/square reframes, the 15s and 6s cut-downs, the Thai/Japanese versions, and all on-screen text — is **derived from that master**, not built from scratch. That keeps the job simple: **3 creative builds, not 48.**
+> **Approach.** Three films, **each priced as its own standalone shoot.** The client has told us filming dates must stay flexible because the fighters' travel isn't fixed, so we **cannot** assume the three shoots fall back-to-back on one crew call. Each film therefore carries its own full mobilisation — crew, kit, location, support — scheduled for whenever that fighter is in Dubai. That's why the client is budgeting *per film*, and why our number is built *per film*.
 >
-> Costings below are realistic Dubai market figures (2026) for a premium, paid UFC × regulated-broker production — not favour rates. They are planning estimates to be firmed against live supplier quotes before the proposal goes out.
+> If two or more shoots do happen to land on consecutive days, we **credit back** the saved mobilisation (location, kit re-rental, crew travel) — we don't bank that discount up front and risk a number we can't deliver.
+>
+> Within each film, post is **master-led**: we build one finished master and derive every reframe, cut-down and language version from it. Costings are realistic Dubai market figures (2026) for a paid premium UFC × regulated-broker production — to be firmed against live supplier quotes.
 
 ---
 
@@ -16,89 +18,91 @@
 
 | | |
 |---|---|
-| **Films** | **3** — 1× Hantec Markets (Loma), 2× Hantec Trader (Rei & Rinya, one concept each) |
-| **Budget envelope** | **USD 55–60k per film → ~165–180k total** |
-| **Shoot** | 3 days × 6 hrs in Dubai; **one fighter per day** (≤6 hrs each, hard cap), each day includes that fighter's photo shoot |
-| **Location** | UFC-style gym / fight environment — **we source & secure** (client invited our recommendations) |
-| **Post timeline** | First edit within 1 week of shoot; final within 2 weeks |
-| **Languages** | Markets: EN + Thai · Trader: EN + Japanese (native VO; on-screen text & versions in post) |
+| **Films** | **3 independent productions** — 1× Hantec Markets (Loma), 2× Hantec Trader (Rei & Rinya, one concept each) |
+| **Budget** | **USD 55–60k per film** (client's framing — and the right one) → ~165–180k total |
+| **Shoots** | 3 separate shoot days (≤6 hrs per fighter, hard cap), **dates flexible / fighter-led**, each scheduled when its fighter is in Dubai; each day includes that fighter's photo shoot |
+| **Timeline** | Target completion end of July, but **flexes per fighter availability** — we hold a shoot-ready crew/kit/location plan that can mobilise on confirmation of each fighter's dates |
+| **Location** | UFC-style gym / fight environment — **we source & secure**, per shoot |
+| **Post** | Per film: first edit within 1 week of *that* shoot; final within 2 weeks |
+| **Languages** | Markets: EN + Thai · Trader: EN + Japanese (native VO; text & versions in post) |
 | **Usage** | Google + social, 6-month term, APAC incl. TH/JP |
 | **Approvals** | 3 rounds (client + UFC) |
 | **Stills** | Edited hero stills per fighter (assume ~10 finals each) |
 
-**Client carries (excluded from our cost):** fighter fees, flights, travel, accommodation, fighter scheduling with the UFC, UFC rights, and the copy. We handle everything else, including on-set talent care (green room, grooming, wardrobe, interpreter, scheduling within the 6-hr cap).
+**Client carries (excluded):** fighter fees, flights, travel, accommodation, fighter scheduling with the UFC, UFC rights, and the copy. We handle everything else, including on-set talent care within each fighter's 6-hr window.
 
 ---
 
-## 2. Deliverables — master-led
-
-**Per film: 1 master + derivatives.**
+## 2. Deliverables — master-led (per film)
 
 1. **Master** — 30s hero, 16:9, fully finished (edit, grade, sound design, music, EN VO, graphics).
 2. **Reframes** — 9:16 and 1:1 off the master.
-3. **Cut-downs** — 15s and 6s, pulled from the master timeline.
-4. **Language versions** — Thai (Markets) / Japanese (Trader): swap VO + on-screen text on the same master; no re-edit or re-grade.
+3. **Cut-downs** — 15s and 6s from the master timeline.
+4. **Language version** — Thai (Markets) / Japanese (Trader): swap VO + on-screen text on the same master; no re-edit/re-grade.
 5. **Stills set** — selected, retouched hero images of that fighter.
 
-On-screen text (supers, the strike→product labels, logo lockups, disclaimers) is a **graphics layer on the master** — added once, carried across every reframe/cut-down/language. JP/TH versions are produced from the EN master exactly as the brief specifies.
-
-Net export count across 3 films is ~40–48 files, but they roll off **3 masters + one versioning/localization pass** — so we cost the 3 masters and one versioning workflow, not 48 jobs.
+On-screen text (supers, strike→product labels, logo lockups, disclaimers) is one **graphics layer on the master**, carried across every version. JP/TH produced from the EN master, per the brief. So per film it's **one build + a versioning pass**, not a dozen separate jobs.
 
 ---
 
-## 3. Shot notes (what each day has to get)
+## 3. Shot notes (what each shoot has to get)
 
-- **Markets / Loma — "The Discipline to Decide"** *(premium, cinematic, low movement due to injury)*: stretching, reviewing notes with coach, watching others train; macro detail (repetition, breath, focus); a trader at charts; Loma calm centre-frame hero. Measured, deliberate — no sparring/impact.
-- **Trader C1 / Rei or Rinya — "Know Who's in Your Corner"** *(fast, evidence-led)*: corner-team dynamic, talent between rounds, close-up expressions, **direct-to-camera sign-off (needs clean sync sound)**, intercut trader at screen.
-- **Trader C2 / Rei or Rinya — "Every Trader Has a Signature Move"** *(energy builds, high-speed)*: six clean strikes (Jab, Cross, Superman Punch, Hook) + Jab→Cross and full Jab→Cross→Hook combos + resets; **slow-mo on key strikes → high-speed camera**. Strike→product labels added in post.
+- **Markets / Loma — "The Discipline to Decide"** *(premium, cinematic, low movement — injury)*: stretching, notes with coach, watching others train; macro detail; trader at charts; Loma calm centre-frame. Measured, no sparring.
+- **Trader C1 / Rei or Rinya — "Know Who's in Your Corner"** *(fast, evidence-led)*: corner-team dynamic, between-rounds calm, close-up expressions, **direct-to-camera sign-off (clean sync sound)**, intercut trader at screen.
+- **Trader C2 / Rei or Rinya — "Every Trader Has a Signature Move"** *(energy builds, high-speed)*: six clean strikes + Jab→Cross and full Jab→Cross→Hook combos + resets; **slow-mo → high-speed camera**. This film carries extra camera/kit cost (see §4 note).
 
-> **Compliance note (bake in, don't over-think):** Hantec is FSC-regulated and the scripts make promotional claims. Carry on-screen **risk warnings/disclaimers** (EN/TH/JP) as a graphics item and route them through the existing 3 approval rounds. Client supplies claim substantiation.
-
----
-
-## 4. Costed quantity survey
-
-Built as a **3-film package** (one crew, one prep, shared shoot, shared post pipeline) — which is exactly why each film lands inside the 55–60k envelope. Figures in USD.
-
-| # | Block | What's in it | Cost |
-|---|-------|--------------|------|
-| 1 | **Pre-production & creative development** | Refine the 3 concepts into shooting scripts; VO scripts (client approves); director's treatment + lookbook; storyboards/shot lists (esp. Film 3 strikes); schedule, call sheets, casting of supporting talent. | **12,000** |
-| 2 | **Production management** | Executive producer + line producer + coordinator across prep, shoot and post; PPM; client servicing; running the 3 approval rounds (client + UFC). | **12,000** |
-| 3 | **Direction & camera crew** (3 days) | Director (prep + shoot); DP; 1st/2nd AC; DIT; high-speed/2nd-camera operator; gimbal/Steadicam operator. | **21,000** |
-| 4 | **Lighting, grip & art** (3 days) | Gaffer + sparks; key grip + grips; dolly/gimbal; production designer + set dressers; **fight/movement choreographer** (Film 3 + safe action around Loma's injury); trading-desk set build & dressing. | **14,000** |
-| 5 | **Styling, grooming & on-set talent support** (3 days) | Wardrobe stylist + assistant (UFC-approved apparel sourcing); HMU; TH/JP interpreters; set medic/physio (combat + injury); supporting cast — corner team, coach, trader actor, background extras — incl. 6-month usage buyout. | **11,000** |
-| 6 | **Equipment rental** | Cinema camera + cine lenses incl. macro (3 days); **high-speed (Phantom-class) package** (1–2 days); lighting package; grip package (dolly/gimbal/slider); monitoring/video village; media & storage. | **21,000** |
-| 7 | **Location & permits** | Premium UFC-style gym / fight environment — **exclusive use, 3 days + recce**; Dubai film permit (DFTC); local fixer; parking/holding. | **14,000** |
-| 8 | **Stills** | Stills photographer + assistant (3 days, hero shots per fighter); selected retouching (~10 finals/fighter). | **10,000** |
-| 9 | **Production support** | Catering & craft (crew + talent, 3 days); transport & logistics; production insurance (public liability + equipment); expendables; power/generator; BTS capture. | **10,000** |
-| 10 | **Post-production** | 3 master hero films (offline + online); colour grade; sound design + final mix; **music licensing** (3 tracks, 6-mo multi-market, paid digital); motion graphics & on-screen text (supers, strike→product builds, logo lockups, disclaimers); VO record (EN + TH + JP); **versioning & localization off the masters** (9:16 + 1:1 reframes, 15s + 6s cut-downs, encoding + platform QC); post supervision + review platform. | **34,000** |
-| | **Subtotal** | | **159,000** |
-| | **Contingency (10%)** | Combat action, tight end-July timeline, Loma's injury, fighter-availability dependency. | **15,900** |
-| | **TOTAL** | | **~174,900** |
-
-**≈ USD 58,300 per film — inside the 55–60k envelope.**
-
-### Where the money sits (sanity check)
-- **Production (shoot) blocks 3–9 ≈ 101k (~58%)** — the cinema crew, high-speed kit and an exclusive premium fight-environment location are the real costs here, and they're priced as such.
-- **Post block 10 ≈ 34k (~19%)** — concentrated in 3 master builds + one versioning/localization pass, not 48 jobs.
-- **Prep + management ≈ 24k (~14%)**, **contingency ≈ 9%.**
+> **Compliance (bake in):** Hantec is FSC-regulated; scripts make promotional claims. Carry on-screen **risk warnings/disclaimers** (EN + local) as a graphics item through the 3 approval rounds. Client supplies claim substantiation.
 
 ---
 
-## 5. Assumptions (sensible defaults — no need to ask)
+## 4. Costed quantity survey — per film
+
+Each film is a **standalone 1-day shoot** (≤6 hrs) with its own mobilisation. Figures USD. This is a representative build; per-film variance is noted below.
+
+| # | Block | What's in it (per shoot) | Cost |
+|---|-------|--------------------------|------|
+| 1 | **Creative & pre-production** | Refine the concept into a shooting script; VO script (client approves); treatment + lookbook; storyboard/shot list; schedule & call sheet. | **5,000** |
+| 2 | **Production management** | Producer + coordinator (prep + shoot day); approval coordination (client + UFC). | **3,000** |
+| 3 | **Direction & camera crew** | Director (prep + day); DP; 1st/2nd AC; DIT; gimbal op (+ high-speed op on Film 3). | **8,000** |
+| 4 | **Lighting, grip & art** | Gaffer + sparks; grips + dolly/gimbal; production designer + set dressing; **fight/movement choreographer**; trading-desk set. | **5,000** |
+| 5 | **Styling, grooming & talent support** | Stylist + UFC-approved apparel sourcing; HMU; TH/JP interpreter; set medic/physio; supporting cast (corner team, coach, trader actor, extras) + 6-mo buyout. | **4,000** |
+| 6 | **Equipment rental** | Cinema camera + cine lenses incl. macro; lighting package; grip package; monitoring/media. (**+ high-speed/Phantom-class package on Film 3**.) | **7,500** |
+| 7 | **Location & permit** | Premium UFC-style gym / fight environment, exclusive for the day + recce; Dubai film permit (DFTC); fixer; parking/holding. | **6,000** |
+| 8 | **Stills** | Photographer + assistant (the day's photo shoot); ~10 retouched finals. | **3,000** |
+| 9 | **Production support** | Catering & craft; transport & logistics; production insurance (PL + equipment); expendables; power; BTS. | **2,500** |
+| 10 | **Post-production** | Master hero (offline + online); colour grade; sound design + mix; **music licence** (1 track, 6-mo multi-market); motion graphics & on-screen text (supers, strike→product builds, logo lockups, disclaimers); VO (EN + local); **versioning & localisation off the master** (9:16 + 1:1, 15s + 6s, encode + QC). | **8,500** |
+| | **Subtotal / film** | | **52,500** |
+| | **Contingency (10%)** | Combat action, fighter-availability dependency, single-day weather/scheduling risk. | **5,250** |
+| | **TOTAL / film** | | **~57,750** |
+
+**× 3 films ≈ USD 173,000 total — each film inside the 55–60k envelope.**
+
+### Per-film variance (it's not three identical numbers)
+- **Film 3 (Signature Move)** carries the **high-speed/Phantom package + extra camera op** (+~$4–5k on blocks 3 & 6) and the choreography load — it sits at the **top** of the 55–60k band.
+- **Film 1 (Loma)** is premium-cinematic but low-action; **Film 2 (Corner)** is dialogue/sync-led — both land **mid-band**.
+- They average to ~$57–58k each; we'd quote each film on its own line so the client can stage them as fighters confirm.
+
+### Why per-film, not packaged
+Blocks 3–9 (crew, kit, location, support ≈ $36k/shoot) **repeat for each shoot** because we can't guarantee shared dates. That repetition is the honest cost of the flexibility the client asked for. The only genuinely-once items are high-level creative campaign thinking and the post pipeline/brand-template setup — minor, and already absorbed in the per-film figures.
+
+---
+
+## 5. Assumptions (sensible defaults)
 
 1. All 3 films proceed; Trader's two concepts split across Rei and Rinya (assignment doesn't change cost).
-2. One fighter per shoot day; that day delivers their film coverage **and** stills inside the 6-hr cap.
-3. **Native VO** for TH and JP (client said they'll approve VO scripts).
-4. We **build the master and derive** all formats/languages from it (Section 2).
-5. We **source and secure** the location (cost included); if the client/UFC provides the gym free, block 7 drops accordingly.
-6. ~10 retouched stills per fighter.
-7. Quote in USD; figure includes our package margin within the per-film envelope.
+2. **Dates are fighter-led and may be spread** — each shoot is mobilised independently; end-July is the target, not a fixed block.
+3. One fighter per shoot day; that day delivers their film coverage **and** stills inside the 6-hr cap.
+4. **Native VO** for TH and JP (client approves the scripts).
+5. Per film we **build one master and derive** all formats/languages from it.
+6. We **source and secure** each location (cost included); if the UFC/client provides a gym free, block 7 drops for that film.
+7. ~10 retouched stills per fighter.
+8. Quote in USD per film; figure includes our margin within the envelope.
 
 ## 6. Worth confirming before issuing (commercial only)
 
-- **Gym:** are we sourcing it (as costed) or will the UFC/client provide it? Biggest single swing.
-- **Stills volume:** is ~10 finals/fighter right, or do they want more?
-- **Music:** licensed library (as costed) vs bespoke track (adds ~5–8k).
+- **Gym:** are we sourcing each location (as costed) or will the UFC/client provide one? Biggest swing.
+- **Stills volume:** ~10 finals/fighter, or more?
+- **Music:** licensed library (as costed) vs bespoke (+~5–8k/film).
+- **Scheduling:** rough fighter-availability windows so we can hold crew/kit/location options against each — even approximate dates de-risk the end-July target.
 
-> Everything else from the brief is answered or assumed above. Next step: drop live supplier quotes into blocks 3–10 and lock the per-film package price.
+> Next step: drop live supplier quotes into blocks 3–10 and issue three per-film line items the client can green-light independently as each fighter's dates confirm.
