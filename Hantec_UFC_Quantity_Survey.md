@@ -16,7 +16,7 @@
 - **Per film:** prep + one ≤6-hr shoot day (incl. that fighter's photo shoot) + master-led post with one localised language version.
 - **VAT (UAE 5%) is excluded** and added at invoice. Figures in USD.
 
-> **Headline finding:** properly costed, this job runs **~$85–98k per film (~$270k total)** — materially above the client's indicated $55–60k/film. The gap and the levers to close it are set out in §4. No corners are cut in the survey below to make the budget fit.
+> **Headline finding:** properly costed (with the agreed trims), this job runs **~$83–93k per film (~$261k total)** — materially above the client's indicated $55–60k/film. **Bundling shoots does not close that gap** — it saves only ~$12.5k per shared film (location, kit re-rental, prep, one mobilisation; crew and post are paid per film regardless). The honest position and the three scheduling scenarios are in §4. No corners are cut to make the budget fit.
 
 ---
 
@@ -53,10 +53,9 @@ Three cost columns — the films are not identical. **F1** = Markets/Loma (premi
 | Gaffer + electrician | 1,200 | 1,200 | 1,200 |
 | Key grip + grip | 1,100 | 1,100 | 1,100 |
 | **E. Art, wardrobe & grooming crew** | | | |
-| Production designer / art director | 1,800 | 1,800 | 1,800 |
-| Set dresser | 550 | 550 | 550 |
+| Production designer / art director (now covers dressing) | 1,800 | 1,800 | 1,800 |
 | Fight / movement choreographer | 600 | 900 | 1,500 |
-| Wardrobe stylist + assistant | 1,600 | 1,600 | 1,600 |
+| Wardrobe stylist | 1,200 | 1,200 | 1,200 |
 | HMU artist | 700 | 700 | 700 |
 | Interpreter (TH / JP) | 550 | 550 | 550 |
 | **F. AD & support crew** | | | |
@@ -93,53 +92,62 @@ Three cost columns — the films are not identical. **F1** = Markets/Loma (premi
 | Production insurance (PL + equipment) | 1,300 | 1,300 | 1,300 |
 | **M. Post-production** | | | |
 | Offline edit (incl. 3 approval rounds) | 3,000 | 3,000 | 3,000 |
-| Online / conform / finishing | 1,000 | 1,000 | 1,000 |
+| Online / conform / finishing | 500 | 500 | 500 |
 | Colour grade | 1,800 | 1,800 | 1,800 |
-| Motion graphics & on-screen text | 2,000 | 2,200 | 3,200 |
+| Motion graphics & on-screen text | 1,800 | 2,000 | 3,000 |
 | Sound design + final mix | 1,400 | 1,400 | 1,400 |
-| Music licence (1 track, 6-mo, multi-market, paid) | 2,200 | 2,200 | 2,200 |
+| Music licence (library track, 6-mo, multi-market) | 800 | 800 | 800 |
 | VO record — EN | 1,000 | 1,000 | 1,000 |
 | VO record — local (TH/JP) + direction | 900 | 900 | 900 |
 | Transcreation / translation (VO + text) | 400 | 400 | 400 |
-| Versioning (9:16 + 1:1, 15s + 6s) | 1,800 | 1,800 | 1,800 |
+| Versioning (9:16 + 1:1, 15s + 6s) | 1,500 | 1,500 | 1,500 |
 | Encoding / platform QC / delivery | 500 | 500 | 500 |
 | Stills retouching (~10 finals) | 1,000 | 1,000 | 1,000 |
-| Post supervision + review platform | 900 | 900 | 900 |
-| **Cost subtotal** | **79,200** | **80,900** | **88,500** |
-| **Contingency (10%)** | 7,920 | 8,090 | 8,850 |
-| **Per-film total (excl. VAT)** | **≈ 87,100** | **≈ 89,000** | **≈ 97,350** |
+| Post supervision + review platform | 600 | 600 | 600 |
+| **Cost subtotal** | **75,550** | **77,250** | **84,850** |
+| **Contingency (10%)** | 7,555 | 7,725 | 8,485 |
+| **Per-film total (excl. VAT)** | **≈ 83,100** | **≈ 85,000** | **≈ 93,300** |
 
 ### Project total
 | | |
 |---|---:|
-| Film 1 — Markets / Loma | ≈ 87,100 |
-| Film 2 — Trader / Corner | ≈ 89,000 |
-| Film 3 — Trader / Signature | ≈ 97,350 |
-| **Grand total (excl. VAT)** | **≈ 273,450** |
-| UAE VAT (5%, if applicable) | + ≈ 13,670 |
+| Film 1 — Markets / Loma | ≈ 83,100 |
+| Film 2 — Trader / Corner | ≈ 85,000 |
+| Film 3 — Trader / Signature | ≈ 93,300 |
+| **Grand total (excl. VAT)** | **≈ 261,400** |
+| UAE VAT (5%, if applicable) | + ≈ 13,070 |
 
 ---
 
 ## 3. Where the cost sits (sanity check)
 
-Per film, roughly: **crew labour ~35–40%**, **equipment ~12–15%** (more on F3 for the Phantom), **location & permits ~9%**, **post ~20–22%**, **art/cast/support ~12%**, **prep + management ~9%**, contingency 10%. This is a normal premium-commercial distribution for a single-day Dubai shoot — labour-led, with the high-speed package and exclusive fight-environment location being the two items that pushed the earlier draft's numbers up to where they should always have been.
+Per film, roughly: **crew labour ~40%**, **post ~18%**, **equipment ~12–15%** (more on F3 for the Phantom), **location & permits ~10%**, **art/cast/support ~12%**, **prep + management ~9%**, contingency 10%. The two big costs are **crew and post** — and the reason the *total* is large is that, with no shared dates, that full stack is mobilised three times. That is the structural driver, not any single fat line.
 
 ---
 
-## 4. Reconciliation vs the client's $55–60k/film
+## 4. Scheduling scenarios — what bundling actually saves
 
-The honest market cost (~$87–97k/film) sits **~$30–40k/film above** the client's indicated budget. I am **not** pre-applying any of the reductions below — the survey prices the job as briefed. These are the levers available **if the client chooses to bring it to budget**, with rough per-film savings:
+Bundling is the only structural lever, and it is **smaller than it first looks.** Crew are paid for every shoot day and every film is finished separately in post, so neither is reduced by sharing dates. Bundling only collapses the **mobilisation-dependent** costs — location (one venue booking + one permit + one recce), kit re-rental at multi-day rates, shared prep/coordination, and one transport/setup. That nets **~$12.5k per film that shares a block.**
 
-| Lever | Approx. saving / film | Trade-off |
+| Scenario | What it means | Total (excl. VAT) |
+|---|---|---:|
+| **A — 3 standalone shoots** | Worst case; each fighter on their own date. Full flexibility, no sharing. | **≈ 261,400** |
+| **B — Trader pair bundled + Loma standalone** | Rei + Rinya (same brand, same JP language, most likely to align) on back-to-back days; Loma separate. The realistic middle. | **≈ 248,900** |
+| **C — All three bundled** | One consecutive 3-day block, one crew/kit/location call. Needs all dates to align — which the client said they can't promise. | **≈ 236,400** |
+
+**The point you raised:** there is no smooth middle because the trims are small (~$3.6k/film, already applied) and bundling caps out at ~$25k total — not the $60k I wrongly implied. So the spread across all scheduling options is only **~$236k–261k**.
+
+**The honest conclusion:** even the best case (~$236k ≈ $79k/film) is still **~$19–24k/film above** the client's $55–60k. That gap is **not a scheduling problem — it's a scope/tier problem.** Closing it means changing what we're making, not when:
+
+| Scope lever | Approx. saving | Trade-off |
 |---|---:|---|
-| Consolidate 2–3 shoots onto back-to-back days (one crew/kit/location call) | 15–25k | Needs fighter dates to align — the thing the client said they can't guarantee |
-| Drop high-speed/Phantom on F3, shoot slow-mo on a high-fps cinema body | 5–7k | Less extreme slow-mo; still good |
-| Library music vs the assumed premium licence | 1–1.5k | Less distinctive; bespoke would instead *add* 5–8k |
-| Trim deliverable matrix (e.g. fewer cut-down ratios/durations) | 1–3k | Fewer paid-media variants |
-| Lean crew (combine roles, ~15 vs ~18 pax) | 4–6k | Tighter day, less coverage flexibility |
-| Single hero per brand instead of 3 distinct films | up to a full film | Loses the per-fighter concept the client said they want |
+| Drop high-speed/Phantom on F3 → high-fps cinema body | 5–7k (F3) | Less extreme slow-mo |
+| Fewer deliverables (cut some cut-down ratios/durations) | 1–3k / film | Fewer paid-media variants |
+| Lower-tier crew / smaller unit | 8–12k / film | No longer top-premium |
+| Subtitles instead of native local VO | 1–1.5k / film | Less polished localisation |
+| One hero per brand instead of 3 distinct films | a full film | Loses the per-fighter concept the client wants |
 
-> Recommendation: present the true per-film cost, then offer the consolidation + high-speed levers as the cleanest path toward their number — as the client's choice, not a discount we lead with.
+> Recommendation: take Scenario A (or B if the Traders can align) as the true price, and only reach for the scope levers if the client confirms $55–60k is a hard ceiling — at which point it's an explicit scope conversation, not a quiet discount.
 
 ---
 
@@ -148,6 +156,8 @@ The honest market cost (~$87–97k/film) sits **~$30–40k/film above** the clie
 **Included:** all crew, equipment, location, permits, art/set, wardrobe, supporting cast + 6-month usage, full post, localisation (one language/film), stills, insurance, transport, catering, contingency.
 
 **Excluded (client or add-on):** fighter fees/flights/travel/accommodation; UFC rights & guidelines; copy; UAE VAT; bespoke music (add ~5–8k); additional languages beyond one/film; subtitle-only alternatives; extra approval rounds beyond three; any crew/director travel if not Dubai-based (assumed local).
+
+**Agreed trims applied:** set dresser folded into the art department; standalone wardrobe assistant removed; post leaned (library music, lighter online/versioning/supervision). Generator and gimbal rig **retained** per direction.
 
 **Assumptions:** all 3 films proceed (Rei/Rinya split, cost-neutral); one fighter per shoot day within the 6-hr cap; native VO for TH/JP; we source each location (drops if UFC/client provides a gym); ~10 retouched stills/fighter; on-screen text and language versions produced in post from the EN master.
 
