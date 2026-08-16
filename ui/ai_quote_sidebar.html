@@ -2942,7 +2942,18 @@
       }
 
       function getCurrentCategoryConfig() {
-        return categoryConfigMap[currentBriefType] || null;
+        const direct = categoryConfigMap[currentBriefType];
+        if (direct) {
+          return direct;
+        }
+        const normalized = normalizeBriefTypeKey(currentBriefType);
+        if (!normalized) {
+          return null;
+        }
+        const matchedKey = Object.keys(categoryConfigMap).find(function(key) {
+          return normalizeBriefTypeKey(key) === normalized;
+        });
+        return matchedKey ? categoryConfigMap[matchedKey] : null;
       }
 
       function getCurrentCategoryHash() {
@@ -3009,7 +3020,7 @@
           categoryPhaseSelection = [];
           // Phase initialization pattern from App-script/ui/ai_quote_sidebar.html:2980
           ensureArray(config.phases).forEach(function(phase) {
-            const phaseId = phase && (phase.phaseId || phase.id);
+            const phaseId = phase && (phase.phaseId || phase.id || phase.canonical);
             if (!phaseId) {
               return;
             }
@@ -3021,7 +3032,7 @@
         if (phaseHost) {
           phaseHost.innerHTML = '';
           ensureArray(config.phases).forEach(function(phase) {
-            const phaseId = phase && (phase.phaseId || phase.id);
+            const phaseId = phase && (phase.phaseId || phase.id || phase.canonical);
             if (!phaseId) {
               return;
             }
@@ -7742,7 +7753,7 @@ function handleScopeDraftSuccess(response) {
         const phases = [];
         if (config && Array.isArray(config.phases)) {
           config.phases.forEach(function(phase) {
-            const phaseId = phase && (phase.phaseId || phase.id);
+            const phaseId = phase && (phase.phaseId || phase.id || phase.canonical);
             if (!phaseId) {
               return;
             }
@@ -7769,7 +7780,7 @@ function handleScopeDraftSuccess(response) {
         }
         const phaseLookup = {};
         ensureArray(config.phases).forEach(function(phase, index) {
-          const phaseId = phase && (phase.phaseId || phase.id);
+          const phaseId = phase && (phase.phaseId || phase.id || phase.canonical);
           if (!phaseId) {
             return;
           }
@@ -7813,7 +7824,7 @@ function handleScopeDraftSuccess(response) {
         }
         const missingPhases = [];
         ensureArray(config.phases).forEach(function(phase) {
-          const phaseId = phase && (phase.phaseId || phase.id);
+          const phaseId = phase && (phase.phaseId || phase.id || phase.canonical);
           if (!phaseId || !phase.required) {
             return;
           }

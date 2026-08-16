@@ -394,17 +394,28 @@ function load(configType) {
     // Validate loaded data
     validateConfig_(configType, data);
 
-    // Strip verbose fields from scope phases to reduce cache size (US-014-002-MAIN)
+    // Strip only verbose taxonomy blobs; keep fields required by sidebar + prompts.
     if (configType === 'scopePhases' && data && Array.isArray(data)) {
       const originalData = data;
-      data = data.map(phase => ({
-        canonical: phase.canonical,
-        label: phase.label,
-        briefType: phase.briefType,
-        taxonomyHintJSON: phase.taxonomyHintJSON ? {
-          code: phase.taxonomyHintJSON.code || ''
-        } : {}
-      }));
+      data = data.map(function(phase) {
+        return {
+          briefType: phase.briefType,
+          phaseId: phase.phaseId,
+          label: phase.label,
+          canonical: phase.canonical,
+          required: phase.required,
+          order: phase.order,
+          ancillaryFeeFlagsCSV: phase.ancillaryFeeFlagsCSV,
+          cadence: phase.cadence,
+          deliverableHint: phase.deliverableHint,
+          signalHint: phase.signalHint,
+          synonymsCSV: phase.synonymsCSV,
+          active: phase.active,
+          taxonomyHintJSON: phase.taxonomyHintJSON ? {
+            code: phase.taxonomyHintJSON.code || ''
+          } : {}
+        };
+      });
 
       // Log size reduction
       const originalSize = JSON.stringify(originalData).length;

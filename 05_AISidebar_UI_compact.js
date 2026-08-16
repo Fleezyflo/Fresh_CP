@@ -2168,7 +2168,6 @@ function buildScopeDraftPrompt(context, overrideUserContent) {
     '    }',
     '  ],',
     '  "warnings": ["Usage rights duration pending confirmation"],',
-    '  "questions": ["Can we reuse archive footage?"],',
     '  "assumptions": ["Client owns theme music rights"]',
     '}'
   ].join('\n');
@@ -2180,10 +2179,10 @@ function buildScopeDraftPrompt(context, overrideUserContent) {
   ];
   const evidenceRules = [
     'Evidence rules:',
-    '- Capture counts, deliverables, usage, budget hints, warnings, questions, and approvals implied by the brief and attachments on either the section or item level.',
+    '- Capture counts, deliverables, usage, budget hints, warnings, and approvals implied by the brief and attachments on either the section or item level.',
     '- Cite supporting evidence in `deliverables`, `resources`, `notes`, or `signals` so each line is traceable.',
     '- Operationalize constraints: If the brief mentions specific vendors, travel requirements, or mandated tools, create explicit resource lines for them (e.g. "Travel Allowance", "Vendor: X") or add them to `assumptions`, do not hide them in `notes`.',
-    '- Do not invent numbers; leave numeric estimates null or empty and surface the gap with warnings or questions.',
+    '- Do not invent numbers; leave numeric estimates null or empty and surface the gap with warnings (not questions).',
     '- Keep arrays to at most 12 entries and trim strings to 120 characters.',
     '- Treat synonyms or related phrases as valid evidence for each canonical—e.g., activation/storyboard language for Production / Capture, coverage metrics for Measurement, asset ops or versioning for Deliverable Management, and planning language for Strategy.'
   ];

@@ -376,6 +376,13 @@ function getCommercialFitVectorPersistLimit() {
 function isCommercialFitAssistantFallbackEnabled() {
   return false;
 }
+function normalizeBriefTypeKey_(value) {
+  if (!value && value !== 0) {
+    return '';
+  }
+  return String(value).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+}
+
 function getScopeCategoryConfigMap() {
   try {
     // Load scope phases array from ConfigurationManager
@@ -397,7 +404,10 @@ function getScopeCategoryConfigMap() {
       if (!phase || !phase.briefType) {
         return; // Skip invalid entries
       }
-      const briefType = phase.briefType;
+      const briefType = normalizeBriefTypeKey_(phase.briefType);
+      if (!briefType) {
+        return;
+      }
       if (!configMap[briefType]) {
         configMap[briefType] = { phases: [] };
       }
@@ -430,9 +440,15 @@ function getScopeCategoryConfig(briefType) {
   if (!isScopeCategoryEnabled()) {
     return null;
   }
-  const type = briefType || BRIEF_TYPE_DEFAULT;
+  const type = normalizeBriefTypeKey_(briefType || BRIEF_TYPE_DEFAULT);
   const config = getScopeCategoryConfigMap();
-  return config[type] || null;
+  if (config[type]) {
+    return config[type];
+  }
+  const matchedKey = Object.keys(config).find(function(key) {
+    return normalizeBriefTypeKey_(key) === type;
+  });
+  return matchedKey ? config[matchedKey] : null;
 }
 
 function getScopeCategoryUiData() {
@@ -490,6 +506,73 @@ function getScopeCategoryUiData() {
   };
 }
 
+/**
+ * Runtime config health snapshot for sidebar + menu diagnostics.
+ * @returns {Object} status payload with counts and missing tab hints
+ */
+function getConfigStatus() {
+  const status = {
+    enabled: isScopeCategoryEnabled(),
+    source: 'sheet',
+    briefProfiles: 0,
+    scopePhaseGroups: 0,
+    catalogPrefixes: 0,
+    updatedAt: new Date().toISOString(),
+    checksum: '',
+    missingTabs: []
+  };
+
+  try {
+    const profiles = getBriefTypeProfiles();
+    status.briefProfiles = profiles && typeof profiles === 'object' ? Object.keys(profiles).length : 0;
+  } catch (profileError) {
+    status.missingTabs.push('Brief Profiles');
+    try {
+      UnifiedLogger.warn('AISidebar', 'getConfigStatus brief profiles failed', String(profileError));
+    } catch (ignore) {
+      // UnifiedLogger unavailable during bootstrap
+    }
+  }
+
+  try {
+    const scopeMap = getScopeCategoryConfigMap();
+    status.scopePhaseGroups = scopeMap && typeof scopeMap === 'object' ? Object.keys(scopeMap).length : 0;
+  } catch (scopeError) {
+    status.missingTabs.push('Scope Phases');
+    try {
+      UnifiedLogger.warn('AISidebar', 'getConfigStatus scope phases failed', String(scopeError));
+    } catch (ignore) {
+      // UnifiedLogger unavailable during bootstrap
+    }
+  }
+
+  try {
+    const prefixes = ConfigurationManager.get('catalog.prefixes');
+    if (Array.isArray(prefixes)) {
+      const groups = {};
+      prefixes.forEach(function(row) {
+        if (!row || !row.briefType) {
+          return;
+        }
+        const key = normalizeBriefTypeKey_(row.briefType);
+        if (key) {
+          groups[key] = true;
+        }
+      });
+      status.catalogPrefixes = Object.keys(groups).length;
+    }
+  } catch (prefixError) {
+    status.missingTabs.push('Catalog Prefixes');
+    try {
+      UnifiedLogger.warn('AISidebar', 'getConfigStatus catalog prefixes failed', String(prefixError));
+    } catch (ignore) {
+      // UnifiedLogger unavailable during bootstrap
+    }
+  }
+
+  return status;
+}
+
 
 function getBriefTypeProfiles() {
   try {
@@ -512,7 +595,10 @@ function getBriefTypeProfiles() {
       if (!profile || !profile.briefType) {
         return; // Skip invalid entries
       }
-      const briefType = profile.briefType;
+      const briefType = normalizeBriefTypeKey_(profile.briefType);
+      if (!briefType) {
+        return;
+      }
 
       // Parse CSV fields into arrays for UI consumption
       const parsedProfile = {

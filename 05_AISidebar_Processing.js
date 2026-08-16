@@ -3734,7 +3734,6 @@ function normalizeScopeDraftToFinalStructure(simpleDraft) {
     briefType: simpleDraft.briefType,
     scopeEntries: finalEntries,
     warnings: selectNonEmptyStrings(simpleDraft.warnings, 12),
-    questions: selectNonEmptyStrings(simpleDraft.questions, 12),
     assumptions: selectNonEmptyStrings(simpleDraft.assumptions, 12)
   };
 }
