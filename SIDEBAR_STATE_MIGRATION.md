@@ -102,12 +102,15 @@ const SIDEBAR_STATE_CONFIG = {
 - [x] Implemented `saveSidebarState()`
 - [x] Implemented archival/pruning functions
 
-### ✅ Phase 2: Migration (IN PROGRESS)
+### ✅ Phase 2: Migration (COMPLETE)
 - [x] Updated `loadUserSidebarStateRows()` to limit to 50 rows
 - [x] Updated `parseSidebarStatePayload()` to skip empty payloads
 - [x] Migrated `getAIQuoteSidebarState()` to use new API
-- [ ] Migrate `persistSidebarState()` to use new API
-- [ ] Migrate other callers (ScopeMap.js, etc)
+- [x] Migrated `persistSidebarState()` to use `saveSidebarState` / hybrid API
+- [x] Migrated `persistQuoteRun()` and `persistCostConfig()` to `saveSidebarState`
+- [x] Migrated `recordScopeApproval()` and `getScopeContractOverview()` to new API
+- [x] Migrated `ScopeMap.js` `reconcileScopeContractHash_()` to `getSidebarHistory` / `saveSidebarState`
+- [x] Added `unwrapSidebarStateData_()` and legacy type aliases for backward-compatible reads
 
 ### 🔜 Phase 3: Lifecycle (FUTURE)
 - [ ] Enable auto-archival (monthly trigger)
@@ -193,22 +196,23 @@ const draft = getSidebarCurrentState(user, 'draft');
 
 ## Next Steps
 
-1. **Complete Phase 2**: Migrate remaining callers
-2. **Test**: Verify all sidebar features work
-3. **Enable Phase 3**: Set up archival trigger
-4. **Monitor**: Track performance improvements
+1. **Test**: Verify all sidebar features work with hybrid storage
+2. **Enable Phase 3**: Set up archival trigger (not started — lifecycle triggers remain disabled)
+3. **Monitor**: Track performance improvements
 
 ---
 
 ## Files Changed
 
-- `SidebarStateStorage.js` - New abstraction layer (371 lines)
-- `05_AISidebar_UI.js` - Migrated `getAIQuoteSidebarState()`
-- `00_JsonUtils.js` - No changes (reverted silent mode)
+- `SidebarStateStorage.js` - Abstraction layer (`getSidebarCurrentState`, `saveSidebarState`, `getSidebarHistory`, legacy type matching)
+- `05_AISidebar_UI.js` - Migrated `getAIQuoteSidebarState()` (unwrap Properties envelope)
+- `05_AISidebar_UI_compact.js` - Migrated persist/load callers (`persistSidebarState`, `recordScopeApproval`, `getScopeContractOverview`, etc.)
+- `05_AISidebar_Extracted.js` - Same caller migrations (parallel definitions)
+- `ScopeMap.js` - Migrated `reconcileScopeContractHash_()`
 - `SIDEBAR_STATE_MIGRATION.md` - This file
 
 ---
 
-**Date**: 2026-01-12
-**Status**: Phase 2 in progress
+**Date**: 2026-01-12 (updated 2026-08-16)
+**Status**: Phase 2 complete
 **Performance Gain**: 10x faster, 96% less data
