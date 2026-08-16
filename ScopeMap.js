@@ -940,8 +940,8 @@ function reconcileScopeContractHash_(approvedScope, contract, previousHash) {
   try {
     let snapshotId = extractScopeSnapshotId_(approvedScope);
     if (typeof hydrateScopeContracts !== 'function' ||
-        typeof loadUserSidebarStateRows !== 'function' ||
-        typeof upsertUserSidebarStateRow !== 'function' ||
+        typeof getSidebarHistory !== 'function' ||
+        typeof saveSidebarState !== 'function' ||
         typeof getActiveUserEmailSafe !== 'function') {
       trace.complete('reconcileScopeContractHash_ completed - missing functions');
       return null;
@@ -951,38 +951,36 @@ function reconcileScopeContractHash_(approvedScope, contract, previousHash) {
     if (!user) {
       return null;
     }
-    const rows = loadUserSidebarStateRows(user);
-    if (!Array.isArray(rows) || rows.length === 0) {
+    const snapshotHistory = getSidebarHistory(user, 'snapshot', 25);
+    if (!Array.isArray(snapshotHistory) || snapshotHistory.length === 0) {
       return null;
     }
-    const snapshotRecords = rows
-      .filter(function(row) {
-        return row && row.type === 'snapshot';
-      })
-      .map(function(row) {
-        let parsed = null;
-        if (row.payload) {
-          parsed = typeof parseSidebarStatePayload === 'function'
-            ? parseSidebarStatePayload(row.payload)
-            : null;
-          if (!parsed) {
-            try { UnifiedLogger.warn('ScopeMap', 'Invalid sidebar payload JSON', { rowId: row.id, payloadLength: String(row.payload).length }); } catch (ignore) {
+    const snapshotRecords = snapshotHistory
+      .map(function(item) {
+        let parsed = item.data ? Object.assign({}, item.data) : null;
+        if (parsed) {
+          parsed.id = parsed.id || item.id;
+        }
+        if (!parsed) {
+          try { UnifiedLogger.warn('ScopeMap', 'Invalid sidebar payload JSON', { rowId: item.id, payloadLength: item.data ? JSON.stringify(item.data).length : 0 }); } catch (ignore) {
       console.error('[ScopeMap] Error:', ignore.message, ignore.stack);
     }
-          }
         }
-        const recordId = parsed && parsed.id ? parsed.id : row.id;
+        const recordId = parsed && parsed.id ? parsed.id : item.id;
         const contractHash = parsed && parsed.contractHash
           ? parsed.contractHash
           : parsed && parsed.draft && parsed.draft.scopeContracts && parsed.draft.scopeContracts.hash
             ? parsed.draft.scopeContracts.hash
             : null;
         return {
-          row: row,
+          item: item,
           payload: parsed,
           id: recordId,
           contractHash: contractHash
         };
+      })
+      .filter(function(entry) {
+        return entry.payload;
       });
     if (!snapshotRecords.length) {
       return null;
@@ -1011,7 +1009,7 @@ function reconcileScopeContractHash_(approvedScope, contract, previousHash) {
     if (!snapshotPayload || typeof snapshotPayload !== 'object') {
       snapshotPayload = {
         id: snapshotId,
-        label: snapshotRecord.row && snapshotRecord.row.label ? snapshotRecord.row.label : (snapshotId || '')
+        label: snapshotRecord.item && snapshotRecord.item.label ? snapshotRecord.item.label : (snapshotId || '')
       };
     }
     const scopedSource = JSON.parse(JSON.stringify(approvedScope));
@@ -1035,14 +1033,10 @@ function reconcileScopeContractHash_(approvedScope, contract, previousHash) {
     snapshotPayload.scopeHierarchy = updatedContract.hierarchy || {};
     snapshotPayload.updatedAt = new Date().toISOString();
 
-    if (snapshotRecord.row) {
-      upsertUserSidebarStateRow({
+    if (snapshotRecord.item) {
+      saveSidebarState(user, 'snapshot', snapshotPayload, {
         id: snapshotId,
-        user: user,
-        type: 'snapshot',
-        label: snapshotPayload.label,
-        payload: JSON.stringify(snapshotPayload),
-        timestamp: snapshotPayload.updatedAt
+        label: snapshotPayload.label
       });
     }
 

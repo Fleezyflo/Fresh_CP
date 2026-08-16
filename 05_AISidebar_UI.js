@@ -1299,8 +1299,8 @@ var quoteBuilderColumnCountCache_ = undefined;
 function getAIQuoteSidebarState() {
   const user = getActiveUserEmailSafe();
   // FAST PATH: Load current state from Properties (instant!)
-  let draftState = getSidebarCurrentState(user, 'draft');
-  let costConfig = getSidebarCurrentState(user, 'cost_config');
+  let draftState = unwrapSidebarStateData_(getSidebarCurrentState(user, 'draft'));
+  let costConfig = unwrapSidebarStateData_(getSidebarCurrentState(user, 'cost_config'));
   // Load recent history from Sheet (limited to 25 snapshots, 25 quote runs)
   const snapshotHistory = getSidebarHistory(user, 'snapshot', 25);
   const quoteRunHistory = getSidebarHistory(user, 'quote_run', 25);

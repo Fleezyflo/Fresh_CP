@@ -5361,13 +5361,9 @@ function persistQuoteRun(user, run) {
   if (!run || !run.id) {
     return;
   }
-  upsertUserSidebarStateRow({
+  saveSidebarState(user, 'quote_run', run, {
     id: run.id,
-    user: user,
-    type: 'quoteRun',
-    label: run.label || run.id,
-    payload: JSON.stringify(run),
-    timestamp: run.executedAt || new Date().toISOString()
+    label: run.label || run.id
   });
 }
 
@@ -5375,13 +5371,9 @@ function persistCostConfig(user, costConfig) {
   if (!costConfig || typeof costConfig !== 'object') {
     return;
   }
-  upsertUserSidebarStateRow({
+  saveSidebarState(user, 'cost_config', costConfig, {
     id: user + '_cost',
-    user: user,
-    type: 'costConfig',
-    label: 'LLM Cost Config',
-    payload: JSON.stringify(costConfig),
-    timestamp: new Date().toISOString()
+    label: 'LLM Cost Config'
   });
 }
 
@@ -5996,8 +5988,8 @@ function getAIQuoteSidebarState() {
   const user = getActiveUserEmailSafe();
 
   // FAST PATH: Load current state from Properties (instant!)
-  let draftState = getSidebarCurrentState(user, 'draft');
-  let costConfig = getSidebarCurrentState(user, 'cost_config');
+  let draftState = unwrapSidebarStateData_(getSidebarCurrentState(user, 'draft'));
+  let costConfig = unwrapSidebarStateData_(getSidebarCurrentState(user, 'cost_config'));
 
   // Load recent history from Sheet (limited to 25 snapshots, 25 quote runs)
   const snapshotHistory = getSidebarHistory(user, 'snapshot', 25);
@@ -6085,6 +6077,7 @@ function getAIQuoteSidebarState() {
 
 /**
  * Persist user-driven sidebar state adjustments (active snapshot, renames, acknowledgements).
+ * MIGRATED: Uses SidebarStateStorage saveSidebarState / hybrid APIs
  * @param {Object} changes
  * @return {{ok:boolean, mutated:boolean}}
  */
@@ -6095,22 +6088,15 @@ function persistSidebarState(changes) {
   }
 
   const user = getActiveUserEmailSafe();
-  const rows = loadUserSidebarStateRows(user);
   const timestamp = new Date().toISOString();
   let mutated = false;
   let currentBriefType = BRIEF_TYPE_DEFAULT;
   let existingDraftState = null;
 
-  rows.forEach(function(row) {
-    if (row.type !== 'draft' && row.type !== 'draftState') {
-      return;
-    }
-    const payload = parseSidebarStatePayload(row.payload);
-    if (!payload) {
-      return;
-    }
+  const currentDraftData = unwrapSidebarStateData_(getSidebarCurrentState(user, 'draft'));
+  if (currentDraftData) {
     try {
-      const normalized = normalizeSidebarDraftState(payload);
+      const normalized = normalizeSidebarDraftState(currentDraftData);
       if (normalized) {
         existingDraftState = normalized;
         if (normalized.briefType) {
@@ -6118,32 +6104,23 @@ function persistSidebarState(changes) {
         }
       }
     } catch (ignored) {
-      // Empty catch replaced with error logging (Phase 6)
       // UnifiedLogger unavailable during bootstrap
     }
-  });
+  }
 
   if (updates.activeSnapshotId) {
     const targetId = String(updates.activeSnapshotId);
-    rows.forEach(function(row) {
-      if (row.type !== 'snapshot') {
-        return;
-      }
-      const payload = parseSidebarStatePayload(row.payload);
-      if (!payload) {
-        return;
-      }
-      const match = row.id === targetId || payload.id === targetId;
+    const snapshotHistory = getSidebarHistory(user, 'snapshot', 25);
+    snapshotHistory.forEach(function(item) {
+      const payload = Object.assign({}, item.data || {});
+      payload.id = payload.id || item.id;
+      const match = item.id === targetId || payload.id === targetId;
       const shouldBeActive = match;
       if (!!payload.isActive !== shouldBeActive) {
         payload.isActive = shouldBeActive;
-        upsertUserSidebarStateRow({
-          id: row.id,
-          user: user,
-          type: 'snapshot',
-          label: payload.label || row.label || row.id,
-          payload: JSON.stringify(payload),
-          timestamp: timestamp
+        saveSidebarState(user, 'snapshot', payload, {
+          id: item.id,
+          label: payload.label || item.label || item.id
         });
         mutated = true;
       }
@@ -6153,24 +6130,16 @@ function persistSidebarState(changes) {
   if (updates.renameSnapshotId && updates.snapshotLabel) {
     const renameId = String(updates.renameSnapshotId);
     const newLabel = String(updates.snapshotLabel).trim();
-    rows.forEach(function(row) {
-      if (row.type !== 'snapshot') {
-        return;
-      }
-      const payload = parseSidebarStatePayload(row.payload);
-      if (!payload) {
-        return;
-      }
-      const match = row.id === renameId || payload.id === renameId;
+    const snapshotHistory = getSidebarHistory(user, 'snapshot', 25);
+    snapshotHistory.forEach(function(item) {
+      const payload = Object.assign({}, item.data || {});
+      payload.id = payload.id || item.id;
+      const match = item.id === renameId || payload.id === renameId;
       if (match) {
         payload.label = newLabel;
-        upsertUserSidebarStateRow({
-          id: row.id,
-          user: user,
-          type: 'snapshot',
-          label: newLabel || row.id,
-          payload: JSON.stringify(payload),
-          timestamp: timestamp
+        saveSidebarState(user, 'snapshot', payload, {
+          id: item.id,
+          label: newLabel || item.id
         });
         mutated = true;
       }
@@ -6187,13 +6156,9 @@ function persistSidebarState(changes) {
       quoteNotes: '',
       briefType: BRIEF_TYPE_DEFAULT
     });
-    upsertUserSidebarStateRow({
+    saveSidebarState(user, 'draft', emptyState, {
       id: user + '_draft',
-      user: user,
-      type: 'draftState',
-      label: 'Active Draft',
-      payload: JSON.stringify(emptyState),
-      timestamp: timestamp
+      label: 'Active Draft'
     });
     mutated = true;
   } else if (
@@ -6248,38 +6213,26 @@ function persistSidebarState(changes) {
       baseDraftState.draft = createEmptyScopeDraft();
     }
     const normalizedDraftState = normalizeSidebarDraftState(baseDraftState);
-    upsertUserSidebarStateRow({
+    saveSidebarState(user, 'draft', normalizedDraftState, {
       id: user + '_draft',
-      user: user,
-      type: 'draftState',
-      label: 'Active Draft',
-      payload: JSON.stringify(normalizedDraftState),
-      timestamp: timestamp
+      label: 'Active Draft'
     });
     mutated = true;
   }
 
   if (updates.acknowledgeRunId) {
     const runId = String(updates.acknowledgeRunId);
-    rows.forEach(function(row) {
-      if (row.type !== 'quoteRun' && row.type !== 'quote_run') {
-        return;
-      }
-      const payload = parseSidebarStatePayload(row.payload);
-      if (!payload) {
-        return;
-      }
-      const match = row.id === runId || payload.id === runId;
+    const quoteRunHistory = getSidebarHistory(user, 'quote_run', 50);
+    quoteRunHistory.forEach(function(item) {
+      const payload = Object.assign({}, item.data || {});
+      payload.id = payload.id || item.id;
+      const match = item.id === runId || payload.id === runId;
       if (match) {
         payload.unresolved = [];
         payload.acknowledgedAt = timestamp;
-        upsertUserSidebarStateRow({
-          id: row.id,
-          user: user,
-          type: row.type,
-          label: row.label || payload.label || row.id,
-          payload: JSON.stringify(payload),
-          timestamp: timestamp
+        saveSidebarState(user, 'quote_run', payload, {
+          id: item.id,
+          label: item.label || payload.label || item.id
         });
         mutated = true;
       }
@@ -6390,44 +6343,30 @@ function recordScopeApproval(options) {
     scopeEntries: contract.entries
   };
 
-  const existingRows = loadUserSidebarStateRows(user);
-  existingRows.forEach(function(row) {
-    if (row.type !== 'snapshot') {
-      return;
-    }
-    const parsed = parseSidebarStatePayload(row.payload);
+  const existingSnapshots = getSidebarHistory(user, 'snapshot', 25);
+  existingSnapshots.forEach(function(item) {
+    const parsed = Object.assign({}, item.data || {});
+    parsed.id = parsed.id || item.id;
     if (!parsed) {
       return;
     }
     if (parsed.isActive) {
       parsed.isActive = false;
-      upsertUserSidebarStateRow({
-        id: row.id,
-        user: user,
-        type: 'snapshot',
-        label: parsed.label || row.label || row.id,
-        payload: JSON.stringify(parsed),
-        timestamp: timestamp
+      saveSidebarState(user, 'snapshot', parsed, {
+        id: item.id,
+        label: parsed.label || item.label || item.id
       });
     }
   });
 
-  upsertUserSidebarStateRow({
+  saveSidebarState(user, 'snapshot', snapshot, {
     id: snapshot.id,
-    user: user,
-    type: 'snapshot',
-    label: snapshot.label,
-    payload: JSON.stringify(snapshot),
-    timestamp: timestamp
+    label: snapshot.label
   });
 
-  upsertUserSidebarStateRow({
+  saveSidebarState(user, 'draft', { draft: storedDraft }, {
     id: user + '_draft',
-    user: user,
-    type: 'draftState',
-    label: 'Active Draft',
-    payload: JSON.stringify({ draft: storedDraft }),
-    timestamp: timestamp
+    label: 'Active Draft'
   });
 
   // If preservation is valid, we don't clear the commercial fit state in the return payload,
@@ -6471,27 +6410,24 @@ function logClientMessage(message) {
 function getScopeContractOverview() {
   try {
     const user = getActiveUserEmailSafe();
-    const rows = loadUserSidebarStateRows(user);
-    const snapshots = filterTruthy(rows
-      .filter(row => row && row.type === 'snapshot' && row.payload)
-      .map(row => {
-        const parsed = typeof parseSidebarStatePayload === 'function'
-          ? parseSidebarStatePayload(row.payload)
-          : null;
-        if (parsed) {
-          parsed.__rowTimestamp = row.timestamp;
-          return parsed;
-        }
-        try {
-          UnifiedLogger.warn('AISidebar', 'getScopeContractOverview: invalid snapshot payload', {
-            rowId: row.id,
-            payloadLength: row.payload ? String(row.payload).length : 0
-          });
-        } catch (ignore) {
-          // UnifiedLogger unavailable during bootstrap
-        }
-        return null;
-      }));
+    const snapshotHistory = getSidebarHistory(user, 'snapshot', 25);
+    const snapshots = filterTruthy(snapshotHistory.map(function(item) {
+      const parsed = item.data ? Object.assign({}, item.data) : null;
+      if (parsed) {
+        parsed.id = parsed.id || item.id;
+        parsed.__rowTimestamp = item.timestamp;
+        return parsed;
+      }
+      try {
+        UnifiedLogger.warn('AISidebar', 'getScopeContractOverview: invalid snapshot payload', {
+          rowId: item.id,
+          payloadLength: item.data ? JSON.stringify(item.data).length : 0
+        });
+      } catch (ignore) {
+        // UnifiedLogger unavailable during bootstrap
+      }
+      return null;
+    }));
 
     if (snapshots.length === 0) {
       return { ok: false, message: 'No approved scope snapshot found for this user. Approve a scope via the AI Quote Builder first.' };

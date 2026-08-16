@@ -56,6 +56,46 @@ const SIDEBAR_STATE_CONFIG = {
 var sessionMigrationCache_ = {};
 
 /**
+ * Legacy sheet row types mapped to canonical SidebarStateStorage types.
+ * @private
+ */
+var SIDEBAR_STATE_LEGACY_TYPE_ALIASES_ = {
+  draft: ['draftState'],
+  cost_config: ['costConfig'],
+  quote_run: ['quoteRun']
+};
+
+/**
+ * Check whether a sheet row type matches a canonical state type (includes legacy aliases).
+ * @param {string} rowType - Type stored on the sheet row
+ * @param {string} canonicalType - Canonical SidebarStateStorage type
+ * @returns {boolean}
+ * @private
+ */
+function matchesSidebarStateType_(rowType, canonicalType) {
+  if (rowType === canonicalType) {
+    return true;
+  }
+  const aliases = SIDEBAR_STATE_LEGACY_TYPE_ALIASES_[canonicalType];
+  return !!(aliases && aliases.indexOf(rowType) >= 0);
+}
+
+/**
+ * Unwrap persisted state data from Properties envelope ({ data: ... }) when present.
+ * @param {Object|null} state - Raw state from getSidebarCurrentState
+ * @returns {Object|null}
+ */
+function unwrapSidebarStateData_(state) {
+  if (!state || typeof state !== 'object') {
+    return state;
+  }
+  if (state.data && typeof state.data === 'object') {
+    return state.data;
+  }
+  return state;
+}
+
+/**
  * Check if user has already been migrated (global flag + session cache)
  * @param {string} userId - User email
  * @returns {boolean} True if already migrated
@@ -180,7 +220,7 @@ function getSidebarCurrentState(userId, stateType) {
     // FALLBACK: Load from Sheet (Tier 2 - Warm)
     const rows = loadUserSidebarStateRows(userId, 50); // Limit to recent
     const match = rows.find(function(row) {
-      return row.type === stateType;
+      return matchesSidebarStateType_(row.type, stateType);
     });
 
     if (match && match.payload) {
@@ -319,7 +359,7 @@ function getSidebarHistory(userId, stateType, limit) {
     let filtered = rows;
     if (stateType) {
       filtered = rows.filter(function(row) {
-        return row.type === stateType;
+        return matchesSidebarStateType_(row.type, stateType);
       });
     }
 
