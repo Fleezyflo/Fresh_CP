@@ -29,6 +29,12 @@ const SIDEBAR_STATE_CONFIG = {
   // Migration tracking
   MIGRATION_FLAG_PREFIX: 'SIDEBAR_MIGRATION_V1_',  // Global flag per user
 
+  // Lifecycle health (script properties — records last scheduled run, not invented metrics)
+  LIFECYCLE_HEALTH_KEYS: {
+    ARCHIVAL: 'SIDEBAR_LIFECYCLE_LAST_ARCHIVAL',
+    PRUNING: 'SIDEBAR_LIFECYCLE_LAST_PRUNE'
+  },
+
   // Tier 2: Active sheet (recent data)
   ACTIVE_SHEET_NAME: '_AI_SIDEBAR_STATE',
   ACTIVE_RETENTION_DAYS: 90,
@@ -328,6 +334,20 @@ function saveSidebarState(userId, stateType, data, options) {
     };
     upsertUserSidebarStateRow(entry);
 
+    // Auto-prune historical types (keep latest N per user)
+    if (stateType === SIDEBAR_STATE_CONFIG.TYPES.SNAPSHOT ||
+        stateType === SIDEBAR_STATE_CONFIG.TYPES.QUOTE_RUN) {
+      try {
+        pruneSidebarStateByType(userId, stateType);
+      } catch (pruneError) {
+        UnifiedLogger.warn('SidebarStateStorage', 'Auto-prune after save failed', {
+          userId: userId,
+          stateType: stateType,
+          error: String(pruneError)
+        });
+      }
+    }
+
     trace.complete('State saved', {
       userId: userId,
       stateType: stateType,
@@ -489,7 +509,7 @@ function pruneSidebarStateByType(userId, stateType) {
     const maxCount = getMaxCountForType_(stateType);
     if (!maxCount) {
       trace.complete('No limit for type', { stateType: stateType });
-      return;
+      return { deleted: 0, kept: 0 };
     }
 
     // Get all rows for this user/type
@@ -501,7 +521,7 @@ function pruneSidebarStateByType(userId, stateType) {
         stateType: stateType,
         count: history.length
       });
-      return;
+      return { deleted: 0, kept: history.length };
     }
 
     // Sort by timestamp DESC, keep only latest N
@@ -532,11 +552,13 @@ function pruneSidebarStateByType(userId, stateType) {
       sheet.deleteRow(rowNum);
     });
 
+    const deleted = rowsToDelete.length;
     trace.complete('Pruned old entries', {
       userId: userId,
       stateType: stateType,
-      deleted: rowsToDelete.length
+      deleted: deleted
     });
+    return { deleted: deleted, kept: maxCount };
 
   } catch (error) {
     trace.fail('pruneSidebarStateByType failed', error);
@@ -577,22 +599,308 @@ function getMaxCountForType_(stateType) {
   return limits[stateType] || null;
 }
 
-// ===== Scheduled Maintenance =====
+// ===== Lifecycle Health & Scheduled Maintenance =====
 
 /**
- * Run monthly archival (create a trigger for this)
- * Run on 1st of each month at 2am
+ * Record that a lifecycle operation ran (archival or pruning).
+ * Stores timestamp + caller-supplied summary only — no invented metrics.
+ *
+ * @param {string} operation - 'archival' or 'pruning'
+ * @param {Object} result - Summary returned by archive/prune helpers
+ * @private
+ */
+function recordSidebarLifecycleRun_(operation, result) {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const keys = SIDEBAR_STATE_CONFIG.LIFECYCLE_HEALTH_KEYS;
+    const key = operation === 'archival' ? keys.ARCHIVAL : keys.PRUNING;
+    const record = {
+      timestamp: new Date().toISOString(),
+      operation: operation,
+      result: result || {}
+    };
+    props.setProperty(key, JSON.stringify(record));
+  } catch (error) {
+    UnifiedLogger.warn('SidebarStateStorage', 'Failed to record lifecycle run', {
+      operation: operation,
+      error: String(error)
+    });
+  }
+}
+
+/**
+ * Read lifecycle health — whether archival/pruning have run and their last summaries.
+ *
+ * @param {Object} [options] - { source: string for logging }
+ * @returns {Object} Health payload with lastArchival, lastPruning, healthy flag
+ */
+function checkSidebarStateLifecycleHealth(options) {
+  const opts = options || {};
+  const props = PropertiesService.getScriptProperties();
+  const keys = SIDEBAR_STATE_CONFIG.LIFECYCLE_HEALTH_KEYS;
+  let lastArchival = null;
+  let lastPruning = null;
+
+  try {
+    const archivalRaw = props.getProperty(keys.ARCHIVAL);
+    if (archivalRaw) {
+      lastArchival = safeJsonParse(archivalRaw, null);
+    }
+    const pruningRaw = props.getProperty(keys.PRUNING);
+    if (pruningRaw) {
+      lastPruning = safeJsonParse(pruningRaw, null);
+    }
+  } catch (error) {
+    UnifiedLogger.warn('SidebarStateStorage', 'checkSidebarStateLifecycleHealth read failed', {
+      error: String(error)
+    });
+  }
+
+  const healthy = !!(lastArchival && lastPruning);
+  const payload = {
+    source: opts.source || 'manual',
+    healthy: healthy,
+    lastArchival: lastArchival,
+    lastPruning: lastPruning
+  };
+
+  try {
+    UnifiedLogger.info('SidebarStateStorage', 'Sidebar lifecycle health', payload);
+  } catch (ignore) {
+    console.log('Sidebar lifecycle health:', JSON.stringify(payload));
+  }
+
+  return payload;
+}
+
+/**
+ * Distinct user emails present on the active sidebar state sheet.
+ * @returns {string[]}
+ * @private
+ */
+function getDistinctSidebarStateUserIds_() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet()
+    .getSheetByName(SIDEBAR_STATE_CONFIG.ACTIVE_SHEET_NAME);
+  if (!sheet || sheet.getLastRow() <= 1) {
+    return [];
+  }
+  const lastRow = sheet.getLastRow();
+  const userCol = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+  const seen = {};
+  const users = [];
+  userCol.forEach(function(row) {
+    const email = row[0];
+    if (!email) {
+      return;
+    }
+    const normalized = String(email).trim();
+    if (!normalized || seen[normalized]) {
+      return;
+    }
+    seen[normalized] = true;
+    users.push(normalized);
+  });
+  return users;
+}
+
+/**
+ * Prune snapshot and quote_run rows for every user on the active sheet.
+ * Idempotent — safe to run repeatedly.
+ *
+ * @returns {Object} Summary with usersProcessed and per-type delete counts
+ */
+function pruneSidebarStateForAllUsers_() {
+  const users = getDistinctSidebarStateUserIds_();
+  let snapshotDeleted = 0;
+  let quoteRunDeleted = 0;
+
+  users.forEach(function(userId) {
+    const snapResult = pruneSidebarStateByType(userId, SIDEBAR_STATE_CONFIG.TYPES.SNAPSHOT);
+    const runResult = pruneSidebarStateByType(userId, SIDEBAR_STATE_CONFIG.TYPES.QUOTE_RUN);
+    snapshotDeleted += (snapResult && snapResult.deleted) || 0;
+    quoteRunDeleted += (runResult && runResult.deleted) || 0;
+  });
+
+  return {
+    usersProcessed: users.length,
+    snapshotDeleted: snapshotDeleted,
+    quoteRunDeleted: quoteRunDeleted
+  };
+}
+
+/**
+ * Load the latest current-state envelope from the sheet (bypasses Properties).
+ * Does not delete or modify sheet data.
+ *
+ * @param {string} userId - User email
+ * @param {string} stateType - Canonical state type
+ * @returns {Object|null} State envelope or null
+ * @private
+ */
+function loadCurrentSidebarStateFromSheet_(userId, stateType) {
+  const rows = loadUserSidebarStateRows(userId, SIDEBAR_STATE_CONFIG.MAX_RECENT_ROWS_PER_USER);
+  const matches = rows.filter(function(row) {
+    return matchesSidebarStateType_(row.type, stateType);
+  });
+  if (!matches.length) {
+    return null;
+  }
+
+  matches.sort(function(a, b) {
+    return new Date(b.timestamp) - new Date(a.timestamp);
+  });
+  const match = matches[0];
+  const parsed = parseSidebarStatePayload(match.payload);
+  if (!parsed) {
+    return null;
+  }
+
+  const migrated = migrateSidebarState_(parsed);
+  return {
+    id: match.id,
+    userId: userId,
+    type: stateType,
+    data: migrated,
+    label: match.label || match.id,
+    timestamp: match.timestamp || new Date().toISOString()
+  };
+}
+
+/**
+ * Write a state envelope to Properties cache (Tier 1). Sheet is untouched.
+ *
+ * @param {string} stateType - Canonical state type
+ * @param {Object} envelope - { userId, type, data, id, label, timestamp }
+ * @returns {boolean} True if cached
+ * @private
+ */
+function writeSidebarStateToPropertiesCache_(stateType, envelope) {
+  if (!shouldCacheInProperties_(stateType) || !envelope) {
+    return false;
+  }
+
+  const propKey = SIDEBAR_STATE_CONFIG.PROPERTY_PREFIX + stateType;
+  const stateJson = JSON.stringify(envelope);
+  const sizeBytes = Utilities.newBlob(stateJson, 'text/plain', 'UTF-8').getBytes().length;
+  const maxSize = 9000;
+
+  if (sizeBytes > maxSize) {
+    UnifiedLogger.warn('SidebarStateStorage', 'State too large for Properties populate', {
+      stateType: stateType,
+      sizeBytes: sizeBytes
+    });
+    return false;
+  }
+
+  PropertiesLoader.save(propKey, stateJson);
+  return true;
+}
+
+/**
+ * ONE-SHOT RUNNER: Populate Properties cache from sheet for a user.
+ * Reads sheet only — never deletes sheet rows or wipes Properties silently.
+ *
+ * Run explicitly from Apps Script editor or admin menu:
+ *   populateSidebarStatePropertiesCache({ userId: 'user@example.com' })
+ *   populateSidebarStatePropertiesCache({ dryRun: true })
+ *
+ * Multi-user note: Properties hot cache uses one key per state type (Phase 2 design).
+ * Run per user session, or pass userId for a single targeted warm-up.
+ *
+ * @param {Object} [options] - { userId, dryRun, force }
+ * @returns {Object} Summary { userId, populated, skipped, tooLarge, errors }
+ */
+function populateSidebarStatePropertiesCache(options) {
+  const trace = UnifiedLogger.startTrace('SidebarStateStorage', 'populateSidebarStatePropertiesCache');
+  const opts = options || {};
+  const dryRun = opts.dryRun === true;
+  const force = opts.force === true;
+  const userId = opts.userId || (typeof getActiveUserEmailSafe === 'function'
+    ? getActiveUserEmailSafe()
+    : Session.getActiveUser().getEmail());
+
+  const summary = {
+    userId: userId,
+    dryRun: dryRun,
+    populated: [],
+    skipped: [],
+    tooLarge: [],
+    errors: []
+  };
+
+  const typesToPopulate = [
+    SIDEBAR_STATE_CONFIG.TYPES.DRAFT,
+    SIDEBAR_STATE_CONFIG.TYPES.SNAPSHOT,
+    SIDEBAR_STATE_CONFIG.TYPES.COST_CONFIG
+  ];
+
+  try {
+    typesToPopulate.forEach(function(stateType) {
+      try {
+        if (!force) {
+          const cached = getSidebarCurrentState(userId, stateType);
+          if (cached && cached.userId === userId) {
+            summary.skipped.push(stateType);
+            return;
+          }
+        }
+
+        const envelope = loadCurrentSidebarStateFromSheet_(userId, stateType);
+        if (!envelope) {
+          summary.skipped.push(stateType + ':no_sheet_row');
+          return;
+        }
+
+        if (dryRun) {
+          summary.populated.push(stateType + ':dry_run');
+          return;
+        }
+
+        const wrote = writeSidebarStateToPropertiesCache_(stateType, envelope);
+        if (wrote) {
+          summary.populated.push(stateType);
+          setGlobalMigrationFlag_(userId);
+        } else {
+          summary.tooLarge.push(stateType);
+        }
+      } catch (typeError) {
+        summary.errors.push(stateType + ':' + String(typeError));
+      }
+    });
+
+    trace.complete('Properties cache populate complete', summary);
+    return summary;
+  } catch (error) {
+    trace.fail('populateSidebarStatePropertiesCache failed', error);
+    summary.errors.push(String(error));
+    return summary;
+  }
+}
+
+/**
+ * Run monthly archival + pruning (install trigger via ensureCoreTriggersHealthy_).
+ * Idempotent — safe if trigger fires twice or repair runs overlap.
+ * Run on 1st of each month at 2am (trigger installs in Menu.ensureCoreTriggersHealthy_).
  */
 function scheduledSidebarStateArchival() {
   const trace = UnifiedLogger.startTrace('SidebarStateStorage', 'scheduledSidebarStateArchival');
 
   try {
-    const result = archiveSidebarStateData(90);
-    trace.complete('Scheduled archival complete', result);
+    const archivalResult = archiveSidebarStateData(SIDEBAR_STATE_CONFIG.ACTIVE_RETENTION_DAYS);
+    recordSidebarLifecycleRun_('archival', archivalResult);
 
+    const pruneResult = pruneSidebarStateForAllUsers_();
+    recordSidebarLifecycleRun_('pruning', pruneResult);
+
+    checkSidebarStateLifecycleHealth({ source: 'scheduled-monthly' });
+
+    trace.complete('Scheduled lifecycle maintenance complete', {
+      archival: archivalResult,
+      pruning: pruneResult
+    });
   } catch (error) {
-    trace.fail('Scheduled archival failed', error);
-    // Don't throw - log and continue
+    trace.fail('Scheduled lifecycle maintenance failed', error);
+    // Don't throw — scheduled trigger should not retry-loop
   }
 }
 
