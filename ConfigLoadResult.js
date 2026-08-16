@@ -1,6 +1,6 @@
 /**
  * ConfigLoadResult - Standard result object for all config load operations
- * Part of Phase 1 Fix 1A: Error Propagation
+ * Error Propagation
  * @version 1.0
  */
 

@@ -178,9 +178,7 @@
  *
  * @module ConfigurationManager
  * @version 1.1.0
- * @since Phase 5 Plan 1
- * @updated Phase 5 Plan 4 (validation, documentation, error handling)
- */
+ *  *  */
 
 // ===== Private State =====
 
@@ -501,7 +499,7 @@ function get(key) {
         cached: configCache_.has(key)
       });
     } catch (logError) {
-      // Fallback if logger fails (logging-the-logger pattern from Phase 4)
+      // Fallback if logger fails (logging-the-logger pattern)
       console.error('ConfigurationManager logging failed:', String(logError));
     }
 

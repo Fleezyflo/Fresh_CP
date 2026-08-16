@@ -2674,7 +2674,7 @@ function log(message) {
 
       logSheet.appendRow([new Date(), message]);
     } catch (error) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       console.error('[NormalizeData] Error:', error.message, error.stack);
     }
     trace.complete('log completed', { messageLength: message ? message.length : 0 });

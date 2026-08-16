@@ -259,7 +259,7 @@ function checkXeroAuthStatus() {
 
 /**
  * Make authenticated API call to Xero with automatic 429 retry
- * Phase 3 Enhancement: Automatic retry on rate limit errors (max 3 attempts)
+ * Automatic retry on rate limit errors (max 3 attempts)
  * @param {string} endpoint - API endpoint (e.g., '/Contacts')
  * @param {string} method - HTTP method (GET, POST, PUT)
  * @param {Object} payload - Request payload (optional)

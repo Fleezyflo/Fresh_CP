@@ -51,10 +51,10 @@ The Fresh CP menu system has been streamlined from 30+ items to 14 essential ite
 ### Core Operations (3 items + separator)
 
 **Refresh Config**
-- **Purpose:** Reload configuration from Google Sheets
-- **Function:** `getAllConfig()` (ConfigurationManager.js)
+- **Purpose:** Clear ConfigurationManager caches after editing config sheets
+- **Function:** `refreshAllConfig()` (Menu.js)
 - **Usage:** After modifying config sheets (Brief Profiles, Scope Phases, etc.)
-- **Location:** Menu.js:554
+- **Location:** Menu.js:543
 
 **View Logs**
 - **Purpose:** Open UnifiedLogger log sheet for debugging
@@ -65,7 +65,7 @@ The Fresh CP menu system has been streamlined from 30+ items to 14 essential ite
 
 **System Health**
 - **Purpose:** Run system diagnostics and health checks
-- **Function:** `viewSystemHealth()` (admin/_ViewSystemHealth.js)
+- **Function:** `viewSystemHealth()` (Menu.js)
 - **Usage:** Check integrations, config, and system status
 - **Location:** Menu.js:556
 
@@ -171,7 +171,7 @@ function onOpen(event) {
   menu.addItem('⚡ Sync Inventory to Xero', 'syncToXeroManual');
   menu.addItem('🚀 AI Quote Builder', 'showAIQuoteBuilder');
   menu.addSeparator();
-  menu.addItem('Refresh Config', 'getAllConfig');
+  menu.addItem('Refresh Config', 'refreshAllConfig');
   menu.addItem('View Logs', 'openLogSheet');
   menu.addItem('System Health', 'viewSystemHealth');
   menu.addToUi();

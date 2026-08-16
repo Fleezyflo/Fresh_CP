@@ -1,6 +1,6 @@
 /**
  * LogSearcher Helper Functions for Menu Integration
- * Phase 4 Task 4.3: Menu Integration
+ * Menu Integration
  * Contract: CSR-2026-001-B
  */
 

@@ -18,7 +18,7 @@
  *
  * Load Order: 05_ prefix ensures loading after Config and Phase modules
  *
- * Extracted from monolithic AISidebar.js (Phase 3 Plan 4)
+ * Extracted from monolithic AISidebar.js
  */
 
 // ===================================================================================

@@ -4268,7 +4268,7 @@ function generateQuoteFromApprovedScope(request) {
     throw error;
   }} catch (error) {
     trace.fail('generateQuoteFromApprovedScope failed', error);
-    // Phase 5 Task 5.2.2: User-friendly error handling
+    // User-friendly error handling
     showFriendlyError(
       error,
       'Generating Quote from AI',

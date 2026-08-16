@@ -8,7 +8,7 @@
  * - Provide clean API for ConfigurationManager to delegate to
  *
  * Architecture:
- * - Extracted from ConfigLoader.js (Phase 5 Plan 2)
+ * - Extracted from ConfigLoader.js
  * - Focused on sheet loading only (no properties, no business rules)
  * - Uses CacheService for performance (60min TTL)
  * - Validates with ConfigValidator after loading
@@ -21,8 +21,7 @@
  *
  * @module SheetConfigLoader
  * @version 1.0.0
- * @since Phase 5 Plan 2
- */
+ *  */
 
 // ===== Constants =====
 
@@ -67,7 +66,7 @@ SHEET_EXPECTED_HEADERS[SHEET_CONFIG_TABS.COLUMN_MAP] = ['key', 'value'];
 // ===== Private Helpers =====
 
 /**
- * Log event with fallback (logging-the-logger pattern from Phase 4)
+ * Log event with fallback (logging-the-logger pattern)
  * @private
  */
 function logSheetConfigEvent_(level, message, details) {

@@ -23,7 +23,7 @@
  *
  * Load Order: 05_ prefix ensures loading after all dependency modules
  *
- * Extracted from monolithic AISidebar.js (Phase 3 Plan 6 - Final module)
+ * Extracted from monolithic AISidebar.js
  *
  * NOTE: Configuration moved to 05_AISidebar_Config.js (Plan 03-01)
  * NOTE: Phase management moved to 05_AISidebar_Phase.js (Plan 03-02)
@@ -3619,7 +3619,7 @@ function resolveLLMRunPartialOutput(details) {
         return fallback;
       }
     } catch (ignored) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       // UnifiedLogger unavailable during bootstrap
     }
   }
@@ -5936,7 +5936,7 @@ function generateQuoteFromApprovedScope(request) {
   } catch (error) {
     trace.fail('generateQuoteFromApprovedScope failed', error);
 
-    // Phase 5 Task 5.2.2: User-friendly error handling
+    // User-friendly error handling
     showFriendlyError(
       error,
       'Generating Quote from AI',
@@ -6118,7 +6118,7 @@ function persistSidebarState(changes) {
         }
       }
     } catch (ignored) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       // UnifiedLogger unavailable during bootstrap
     }
   });

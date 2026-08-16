@@ -263,7 +263,7 @@ function throwConfigError(code, message) {
  * Mutex lock to prevent duplicate parallel getAllConfig() calls
  * Ensures only one config load happens at a time, queues concurrent calls
  *
- * Phase 0 Fix: Lazy initialization to prevent undefined errors
+ * Lazy initialization to prevent undefined errors
  * Use getConfigLock_() accessor instead of direct access
  */
 let CONFIG_LOAD_LOCK = null;
@@ -305,7 +305,7 @@ function preloadConfig() {
   }
 }
 
-// getAllConfig() function deleted - migrated to ConfigurationManager (Phase 10 Plan 10-04)
+// getAllConfig() removed; use ConfigurationManager instead
 // Use ConfigurationManager.get('properties.key.name') instead
 // Use ConfigurationManager.invalidate() to clear caches
 
@@ -541,7 +541,7 @@ function ensureConfigInputPlaceholder_(key, options) {
     try {
       configSheet.getRange(configSheet.getLastRow(), 2).setNote(note);
     } catch (ignored) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       console.error('[Config] Error:', ignored.message, ignored.stack);
     }
     trace.complete('ensureConfigInputPlaceholder_ completed - added placeholder', { key: key, sensitive: opts.sensitive });

@@ -10,7 +10,7 @@ const XERO_QUOTES_LOG_CATEGORY = 'XeroQuotes';
  * Main function called from menu
  */
 function exportToXero() {
-  // Phase 5 Task 5.2.5: Add correlation ID tracing
+  // Add correlation ID tracing
   const trace = UnifiedLogger.startTrace('XeroQuotes', 'exportToXero');
 
   if (typeof isQuoteBuilderSchemaTrusted_ === 'function' && !isQuoteBuilderSchemaTrusted_()) {
@@ -195,7 +195,7 @@ function exportToXero() {
     trace.fail('Quote export to Xero failed', error);
     UnifiedLogger.error(XERO_QUOTES_LOG_CATEGORY, 'Error exporting to Xero', error);
 
-    // Phase 5 Task 5.2.5: User-friendly error handling
+    // User-friendly error handling
     showFriendlyError(
       error,
       'Exporting Quote to Xero',

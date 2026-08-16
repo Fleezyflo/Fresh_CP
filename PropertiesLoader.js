@@ -8,7 +8,7 @@
  * - Integrate with ConfigurationManager's dotted key notation
  *
  * Architecture:
- * - Adapted from 00_PropertiesCache.js (Phase 5 Plan 3)
+ * - Adapted from 00_PropertiesCache.js
  * - Focused loader for ConfigurationManager use
  * - Batch loads all properties in one API call (fast!)
  * - In-memory cache for instant subsequent access
@@ -26,8 +26,7 @@
  *
  * @module PropertiesLoader
  * @version 1.0.0
- * @since Phase 5 Plan 3
- */
+ *  */
 
 // ===== Constants =====
 

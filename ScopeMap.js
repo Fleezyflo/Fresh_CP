@@ -371,19 +371,19 @@ function processAndNormalizeEntries_(entries, briefType) {
 
 // DELETED normalizeApprovedScopeSections_ (56 lines)
 // Replaced by processAndNormalizeEntries_ - pattern from App-script/ScopeMap.js:302
-// Performance optimization from PERFORMANCE_FIX_DESIGN.md Phase 3
+// Performance optimization
 
 // DELETED enforceConfiguredPhases_ (62 lines)
 // Replaced by processAndNormalizeEntries_ - pattern from App-script/ScopeMap.js:302
-// Performance optimization from PERFORMANCE_FIX_DESIGN.md Phase 3
+// Performance optimization
 
 // DELETED applyCategoryMetadataToEntries_ (79 lines)
 // Replaced by processAndNormalizeEntries_ - pattern from App-script/ScopeMap.js:302
-// Performance optimization from PERFORMANCE_FIX_DESIGN.md Phase 3
+// Performance optimization
 
 // DELETED ensureCategoryScaffolding_ (34 lines)
 // Replaced by processAndNormalizeEntries_ - pattern from App-script/ScopeMap.js:302
-// Performance optimization from PERFORMANCE_FIX_DESIGN.md Phase 3
+// Performance optimization
 
 function normalizeAncillaryFees_(fees) {
   const trace = UnifiedLogger.startTrace('ScopeMap', 'normalizeAncillaryFees_');
@@ -887,7 +887,7 @@ function validateScopeContract(approvedScope) {
   } catch (error) {
     trace.fail('validateScopeContract failed', error);
 
-    // Phase 5 Task 5.2.10: User-friendly error handling
+    // User-friendly error handling
     showFriendlyError(
       error,
       'Validating Scope Contract',

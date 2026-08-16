@@ -23,7 +23,7 @@
  *
  * Load Order: 05_ prefix ensures loading after all dependency modules
  *
- * Extracted from monolithic AISidebar.js (Phase 3 Plan 6 - Final module)
+ * Extracted from monolithic AISidebar.js
  *
  * NOTE: Configuration moved to 05_AISidebar_Config.js (Plan 03-01)
  * NOTE: Phase management moved to 05_AISidebar_Phase.js (Plan 03-02)

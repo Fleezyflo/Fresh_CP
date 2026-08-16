@@ -21,7 +21,7 @@
  *
  * Load Order: 05_ prefix ensures loading after Config, Phase, Workflow, Data modules
  *
- * Extracted from monolithic AISidebar.js (Phase 3 Plan 5)
+ * Extracted from monolithic AISidebar.js
  */
 
 // Module logging category for UnifiedLogger
@@ -1618,7 +1618,7 @@ function rebuildCommercialFitSnapshot(request) {
   } catch (error) {
     trace.fail('Commercial fit snapshot rebuild failed', error);
 
-    // Phase 5 Task 5.2.3: User-friendly error handling
+    // User-friendly error handling
     showFriendlyError(
       error,
       'Rebuilding Commercial Fit Snapshot',
@@ -3196,7 +3196,7 @@ function invokeCatalogAssistant(userContent, options) {
   } catch (error) {
     trace.fail('invokeCatalogAssistant failed', error);
 
-    // Phase 5 Task 5.2.9: User-friendly error handling
+    // User-friendly error handling
     showFriendlyError(
       error,
       'Invoking Catalog Assistant',

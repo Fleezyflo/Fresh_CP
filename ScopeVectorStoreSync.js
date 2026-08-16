@@ -531,7 +531,7 @@ function uploadScopePayloadsToVectorStore_(payloads, vectorStoreId, apiKey) {
   } catch (error) {
     trace.fail('uploadScopePayloadsToVectorStore_ failed', error);
 
-    // Phase 5 Task 5.2.8: User-friendly error handling
+    // User-friendly error handling
     showFriendlyError(
       error,
       'Uploading Files to Vector Store',

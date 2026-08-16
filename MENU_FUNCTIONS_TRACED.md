@@ -529,12 +529,12 @@ Fresh install → Run Full Bootstrap → Creates all sheets + seeds data → Rea
 ---
 
 ### 📝 Refresh Config ⭐ USEFUL
-**Function:** `getAllConfig()`
-**File:** ConfigurationManager.js
+**Function:** `refreshAllConfig()`
+**File:** Menu.js
 **Status:** Already in menu ✅
 
 **What it does:**
-1. Clears ConfigurationManager cache
+1. Clears ConfigurationManager cache via `ConfigurationManager.invalidate()`
 2. Reloads configuration from sheets:
    - Brief Profiles
    - Scope Phases
@@ -566,7 +566,7 @@ Fresh install → Run Full Bootstrap → Creates all sheets + seeds data → Rea
 
 ### 🏥 System Health 📊 DIAGNOSTIC
 **Function:** `viewSystemHealth()`
-**File:** admin/_ViewSystemHealth.js
+**File:** Menu.js
 **Status:** Already in menu ✅
 
 **What it does:**

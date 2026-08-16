@@ -283,8 +283,8 @@ function viewSystemHealth() {
  * Use this after editing config sheets (Brief Profiles, Scope Phases, catalogs)
  * to see changes immediately without reopening the spreadsheet.
  */
-function refreshConfigMenu() {
-  const trace = UnifiedLogger.startTrace('Menu', 'refreshConfigMenu');
+function refreshAllConfig() {
+  const trace = UnifiedLogger.startTrace('Menu', 'refreshAllConfig');
   try {
     if (typeof ConfigurationManager === 'undefined' || !ConfigurationManager.invalidate) {
       throw new Error('ConfigurationManager not available');
@@ -292,9 +292,9 @@ function refreshConfigMenu() {
 
     ConfigurationManager.invalidate();
     SpreadsheetApp.getActiveSpreadsheet().toast('Configuration cache cleared', 'Config', 3);
-    trace.complete('refreshConfigMenu completed');
+    trace.complete('refreshAllConfig completed');
   } catch (error) {
-    trace.fail('refreshConfigMenu failed', error);
+    trace.fail('refreshAllConfig failed', error);
     SpreadsheetApp.getUi().alert(
       'Error',
       'Failed to refresh config: ' + error.message,
@@ -312,8 +312,8 @@ function buildCoreMenu_() {
     const menu = ui.createMenu('Fresh CP');
 
     // Critical items only (Stage 1 - onOpen)
-    if (typeof refreshConfigMenu === 'function') {
-      menu.addItem('Refresh Config', 'refreshConfigMenu');
+    if (typeof refreshAllConfig === 'function') {
+      menu.addItem('Refresh Config', 'refreshAllConfig');
     }
     menu.addItem('View Logs', 'openLogSheet');
     menu.addItem('System Health', 'viewSystemHealth');
@@ -540,7 +540,7 @@ function onOpen(event) {
     menu.addItem('⚡ Sync Inventory to Xero', 'syncToXeroManual');
     menu.addItem('🚀 AI Quote Builder', 'showAIQuoteBuilder');
     menu.addSeparator();
-    menu.addItem('Refresh Config', 'refreshConfigMenu');
+    menu.addItem('Refresh Config', 'refreshAllConfig');
     menu.addItem('View Logs', 'openLogSheet');
     menu.addItem('System Health', 'viewSystemHealth');
     menu.addToUi();
@@ -1521,8 +1521,8 @@ function buildProductionMenu_(ui) {
     menu.addSeparator();
 
     // Core Operations
-    if (typeof refreshConfigMenu === 'function') {
-      menu.addItem('Refresh Config', 'refreshConfigMenu');
+    if (typeof refreshAllConfig === 'function') {
+      menu.addItem('Refresh Config', 'refreshAllConfig');
     }
     menu.addItem('View Logs', 'openLogSheet');
     menu.addItem('System Health', 'viewSystemHealth');
@@ -4059,7 +4059,7 @@ function showClientJSONDialog() {
 
 /**
  * Show interactive log search dialog.
- * Phase 4, Task 4.3: Menu integration for log search
+ * Menu integration for log search
  */
 function searchLogsMenu() {
   const trace = UnifiedLogger.startTrace('Menu', 'searchLogsMenu');
@@ -4100,7 +4100,7 @@ function searchLogsMenu() {
 
 /**
  * Show error summary for recent errors.
- * Phase 4, Task 4.3: Menu integration for error analysis
+ * Menu integration for error analysis
  */
 function showErrorSummaryMenu() {
   const trace = UnifiedLogger.startTrace('Menu', 'showErrorSummaryMenu');

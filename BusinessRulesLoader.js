@@ -8,7 +8,7 @@
  * - Keep business logic separate from data loading (sheets) and secrets (properties)
  *
  * Architecture:
- * - Consolidated from CostCalculationConfig.js + ScopeCategoryConfig.js (Phase 5 Plan 3)
+ * - Consolidated from CostCalculationConfig.js + ScopeCategoryConfig.js
  * - Pure JavaScript objects (no external dependencies)
  * - Returns deep copies to prevent mutation
  * - Future: Rules might come from Config sheets (enhancement)
@@ -22,8 +22,7 @@
  *
  * @module BusinessRulesLoader
  * @version 1.0.0
- * @since Phase 5 Plan 3
- */
+ *  */
 
 // ===== Constants =====
 

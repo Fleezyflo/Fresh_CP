@@ -191,7 +191,7 @@ function buildSectionTaxonomyFromValidation() {
       const values = sheet.getRange(2, sectionColIndex + 1, lastRow - 1, 1).getValues();
       const unique = new Set();
 
-      // Phase 3 (A-007): Batch processing with progress updates for large datasets
+      // Batch processing with progress updates for large datasets
       const BATCH_SIZE = 100;
       const totalRows = values.length;
       const showProgress = totalRows > BATCH_SIZE; // Only show progress for large datasets
@@ -204,7 +204,7 @@ function buildSectionTaxonomyFromValidation() {
             2
           );
         } catch (toastError) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       console.error('[TemplateManager] Error:', toastError.message, toastError.stack);
     }
       }
@@ -246,7 +246,7 @@ function buildSectionTaxonomyFromValidation() {
               1
             );
           } catch (toastError) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       console.error('[TemplateManager] Error:', toastError.message, toastError.stack);
     }
         }
@@ -261,7 +261,7 @@ function buildSectionTaxonomyFromValidation() {
             2
           );
         } catch (toastError) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       console.error('[TemplateManager] Error:', toastError.message, toastError.stack);
     }
       }
