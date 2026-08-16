@@ -67,7 +67,7 @@ Fresh CP is a Quote & Proposal Builder that combines the power of Google Sheets 
    - `File` → `Project Properties` → `Script Properties`
    - Add: `OPENAI_API_KEY`, `XERO_CLIENT_ID`, `XERO_CLIENT_SECRET`
 2. **Verify System Health**:
-   - Run `_ViewSystemHealth.js` from admin folder
+   - Use **Fresh CP** menu → **System Health** (`viewSystemHealth()` in Menu.js)
    - Check integration status for Xero and OpenAI
 3. **Explore the Codebase**:
    - Start with `Menu.js` to understand user entry points
@@ -421,7 +421,7 @@ Return configuration to caller
 ### Testing
 
 **Manual Testing:**
-- **System Health:** Run `admin/_ViewSystemHealth.js`
+- **System Health:** Use **Fresh CP** menu → **System Health** (`viewSystemHealth()` in Menu.js)
 - **Integration Tests:** Run `admin/_RunAllTests.js`
 - **Phase Verification:** Run `admin/_Phase*Verification.js` for specific checks
 
@@ -514,7 +514,7 @@ clasp push --watch
 
 ### Admin Tools
 
-- **admin/_ViewSystemHealth.js** - System health dashboard
+- **Menu.js** - `viewSystemHealth()`, `refreshAllConfig()`, and other menu handlers
 - **admin/_RunAllTests.js** - Run all test suites
 - **admin/_Phase*Verification.js** - Verify specific phase implementations
 
@@ -528,7 +528,7 @@ clasp push --watch
 
 ## Project Status
 
-**Current State:** Production-ready codebase (Phases 1-6 complete)
+**Current State:** Production-ready codebase (Phases 1-7 complete)
 
 **Completed Refactoring Phases:**
 - ✅ Phase 1: Normalization Consolidation (8 canonical utilities)
@@ -537,7 +537,7 @@ clasp push --watch
 - ✅ Phase 4: Empty Catch Blocks (18 fixes)
 - ✅ Phase 5: Configuration Consolidation (ConfigurationManager + 3 loaders)
 - ✅ Phase 6: Shared Utilities (5 modules, 48 functions)
-- 🔄 Phase 7: Documentation (in progress)
+- ✅ Phase 7: Documentation (README, ARCHITECTURE, API, CONFIGURATION, CHANGELOG; menu v2.0)
 
 **Upcoming Phases:**
 - Phase 8: Repository Hygiene (clean up git state)
@@ -569,6 +569,6 @@ clasp push --watch
 ---
 
 **Version:** 1.0.0
-**Last Updated:** 2026-01-12
+**Last Updated:** 2026-08-16
 **License:** Proprietary
 

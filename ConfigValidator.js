@@ -1,6 +1,6 @@
 /**
  * ConfigValidator - Flexible header and data validation
- * Part of Phase 1 Fix 1B: Header Validation (Presence, not Order)
+ * Header Validation (Presence, not Order)
  * @version 1.0
  */
 

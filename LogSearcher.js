@@ -64,7 +64,7 @@ function searchLogs(options) {
         try {
           entry.detailsObj = JSON.parse(entry.details);
         } catch (ignore) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       console.error('[LogSearcher] Error:', ignore.message, ignore.stack);
     }
       }
@@ -251,7 +251,7 @@ function getLogStatistics(hours) {
 
 /**
  * Generate error summary report (aggregated by category and message pattern).
- * Phase 4, Task 4.2: Error analysis functionality
+ * Error analysis functionality
  *
  * @param {number} [hours] - Number of hours to look back (default: 24)
  * @return {Object} Error summary with counts by category and message
@@ -337,7 +337,7 @@ function generateErrorSummary(hours) {
 
 /**
  * Display log search results in a new sheet.
- * Phase 4, Task 4.2: Log result display functionality
+ * Log result display functionality
  *
  * @param {Array<Object>} logs - Array of log entries from searchLogs()
  * @param {string} [sheetName] - Name for results sheet (default: 'Log_Search_Results')
@@ -429,7 +429,7 @@ function displayLogsInSheet(logs, sheetName) {
 
 /**
  * Show interactive log search dialog.
- * Phase 4, Task 4.2: Interactive search UI
+ * Interactive search UI
  *
  * @example
  * promptLogSearch(); // Shows dialog

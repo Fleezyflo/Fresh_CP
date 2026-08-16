@@ -1,6 +1,6 @@
 /**
  * ErrorBoundary - Error propagation and user notification
- * Part of Phase 1 Fix 1A: Error Propagation
+ * Error Propagation
  * @version 1.0
  */
 

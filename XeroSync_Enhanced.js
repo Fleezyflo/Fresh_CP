@@ -333,7 +333,7 @@ function forceFullSync() {
  */
 
 function syncInventoryToXero() {
-  // Phase 5 Task 5.2.4: Add correlation ID tracing
+  // Add correlation ID tracing
   const trace = UnifiedLogger.startTrace('XeroSync', 'syncInventoryToXero');
 
   const startTime = new Date();
@@ -425,7 +425,7 @@ function syncInventoryToXero() {
     log(`CRITICAL ERROR: ${error.message}`);
     log(error.stack);
 
-    // Phase 5 Task 5.2.4: User-friendly error handling
+    // User-friendly error handling
     showFriendlyError(
       error,
       'Syncing Xero Inventory',

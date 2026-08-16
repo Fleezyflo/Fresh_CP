@@ -313,7 +313,7 @@ function getUiOrNull_() {
 
 /**
  * Create user-friendly error message from technical error.
- * Phase 5, Task 5.1: User-friendly error mapping
+ * User-friendly error mapping
  *
  * @param {Error|string} error - Technical error object or message
  * @param {Object} [options] - Optional configuration
@@ -325,7 +325,7 @@ function getUiOrNull_() {
 function showErrorToast(title, message, retryFunctionName, options) {
   const trace = UnifiedLogger.startTrace('Utilities', 'showErrorToast');
   try {
-    // Phase 5 Enhancement: Support technical details and correlation IDs
+    // Support technical details and correlation IDs
     if (retryFunctionName && typeof retryFunctionName === 'object' && !options) {
       options = retryFunctionName;
       retryFunctionName = null;
@@ -843,7 +843,7 @@ function createUserFriendlyError(error, context) {
  * @param {Error} error - Technical error
  * @param {string} context - What user was doing
  * @param {Object} [options] - Additional options
- * @param {string|Function} [options.retryCallback] - Retry function name (string for Phase 2) or function (legacy)
+ * @param {string|Function} [options.retryCallback] - Retry function name (string) or function (legacy)
  * @param {string} [options.correlationId] - Correlation ID
  * @param {boolean} [options.retryable] - Whether error is retryable
  * @param {string} [options.operationKey] - Operation key for circuit breaker
@@ -892,7 +892,7 @@ function showFriendlyError(error, context, options) {
               3
             );
           } else {
-            // Fallback if Phase 2 not loaded
+            // Fallback if retry helpers not loaded
             ui.alert('Retry Error', 'Retry mechanism not available. Please refresh the page and try again.', ui.ButtonSet.OK);
           }
         } else if (typeof opts.retryCallback === 'function') {

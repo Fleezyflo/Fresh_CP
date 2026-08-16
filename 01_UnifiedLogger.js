@@ -295,7 +295,7 @@ function initializeUnifiedLoggerSpreadsheetId() {
         spreadsheetId = active.getId();
       }
     } catch (e) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       console.error('[01_UnifiedLogger] Error:', e.message, e.stack);
     }
 
@@ -343,7 +343,7 @@ function resolveLogSpreadsheet_() {
       return active;
     }
   } catch (error) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       console.error('[01_UnifiedLogger] Error:', error.message, error.stack);
     }
 
@@ -360,7 +360,7 @@ function resolveLogSpreadsheet_() {
       }
     }
   } catch (error) {
-      // Empty catch replaced with error logging (Phase 6)
+      // Empty catch replaced with error logging
       console.error('[01_UnifiedLogger] Error:', error.message, error.stack);
     }
 

@@ -691,7 +691,27 @@ Files enhanced with correlation ID tracing:
 2. ✅ Plan 07-02: ARCHITECTURE.md (2 tasks)
 3. ✅ Plan 07-03: API.md (2 tasks)
 4. ✅ Plan 07-04: CONFIGURATION.md (2 tasks)
-5. ✅ Plan 07-05: CHANGELOG.md (3 tasks) - **In Progress**
+5. ✅ Plan 07-05: CHANGELOG.md (3 tasks)
+
+### Menu v2.0 Tail (2026-01-13, closed 2026-08-16)
+- Deleted duplicate `admin/_ViewSystemHealth.js` (canonical: `viewSystemHealth()` in Menu.js)
+- Added `refreshAllConfig()` menu handler (ConfigurationManager.invalidate)
+- Updated MENU_STRUCTURE.md and verification docs to match code
+
+### Phase 7 Summary
+
+Phase 7 delivered five core documentation files (~6,400 lines) and consolidated 63 historical phase comments into this CHANGELOG. Production source files no longer carry refactor-phase inline comments (verified: `grep -r "Phase [0-9]:" *.js` returns empty for root production JS). Admin diagnostic scripts retain their own phase labels (CSR-2026-002 trace logging, performance baselines).
+
+**Deliverables:**
+| Document | Lines | Purpose |
+|----------|-------|---------|
+| README.md | 574 | Onboarding, concepts, workflow |
+| ARCHITECTURE.md | 1,752 | Layers, load order, integrations |
+| API.md | 2,240 | 56 public functions |
+| CONFIGURATION.md | 1,875 | Keys, sheets, task guides |
+| CHANGELOG.md | 816+ | Refactor history (this file) |
+
+**Menu v2.0:** 14 items across Fresh CP + Advanced menus; production-ready per MENU_STRUCTURE.md.
 
 ### Duration
 - Plans 07-01 to 07-04: ~60 minutes total
@@ -702,9 +722,7 @@ Files enhanced with correlation ID tracing:
 - c9f37b2 - ARCHITECTURE.md created
 - cd7568f - API.md created
 - d449e95 - CONFIGURATION.md created
-- (This commit) - CHANGELOG.md created
-- (Pending) - Phase comments removed from source files
-- (Pending) - Phase 7 summary
+- (Phase 7 close) - CHANGELOG.md finalized, phase comments stripped, menu tail completed
 
 ### Historical Phase Comments
 
@@ -746,9 +764,7 @@ This CHANGELOG consolidates 63 phase comments that were previously scattered acr
 - ScopeMap.js: Correlation ID tracing (startTrace reference)
 
 ### Next Steps
-- Remove inline phase comments from source files (Task 2)
-- Add formatting enhancements (Task 3)
-- Create Phase 7 summary
+- Phases 8–10 remain on the roadmap (not started in this close)
 
 [Back to Top](#fresh-cp---changelog)
 
@@ -809,8 +825,8 @@ wc -l App-script/CHANGELOG.md
 
 *This CHANGELOG was created in Phase 7 (Plan 07-05) to consolidate 63 phase comments previously scattered across source files.*
 
-*Format: Phases 0-6 complete, Phase 7 in progress, Phases 8-10 pending*
+*Format: Phases 0-7 complete, Phases 8-10 pending*
 
-*Last Updated: 2026-01-12*
+*Last Updated: 2026-08-16*
 
 [Back to Top](#fresh-cp---changelog)
