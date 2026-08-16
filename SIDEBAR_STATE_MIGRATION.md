@@ -112,11 +112,13 @@ const SIDEBAR_STATE_CONFIG = {
 - [x] Migrated `ScopeMap.js` `reconcileScopeContractHash_()` to `getSidebarHistory` / `saveSidebarState`
 - [x] Added `unwrapSidebarStateData_()` and legacy type aliases for backward-compatible reads
 
-### 🔜 Phase 3: Lifecycle (FUTURE)
-- [ ] Enable auto-archival (monthly trigger)
-- [ ] Enable auto-pruning (keep latest N)
-- [ ] Populate Properties cache for existing users
-- [ ] Monitor performance improvements
+### ✅ Phase 3: Lifecycle (COMPLETE)
+- [x] Enable auto-archival (monthly trigger) via `scheduledSidebarStateArchival` → `archiveSidebarStateData(90)`
+- [x] Enable auto-pruning (keep latest N) via `pruneSidebarStateByType` on save + monthly `pruneSidebarStateForAllUsers_`
+- [x] Populate Properties cache: explicit runner `populateSidebarStatePropertiesCache()` (see `admin/_PopulateSidebarPropertiesCache.js`)
+- [x] Monitor: `checkSidebarStateLifecycleHealth()` records last archival/pruning in script properties (`SIDEBAR_LIFECYCLE_LAST_ARCHIVAL`, `SIDEBAR_LIFECYCLE_LAST_PRUNE`)
+- [x] Trigger install: `ensureCoreTriggersHealthy_` creates monthly trigger (1st @ 2am), idempotent dedupe
+- [x] No silent data loss — sheet untouched by populate; destructive wipe only via explicit `clearAllSidebarState()`
 
 ---
 
@@ -149,12 +151,22 @@ saveSidebarState(userId, 'draft', draftData, {
 
 ### Lifecycle Management
 ```javascript
-// Archive old data (run monthly)
+// Archive old data (monthly trigger — scheduledSidebarStateArchival)
 archiveSidebarStateData(90); // Archive >90 days old
 
-// Prune old snapshots (keep latest 25)
+// Prune old snapshots (keep latest 25) — also runs after saveSidebarState
 pruneSidebarStateByType(userId, 'snapshot');
+
+// One-shot Properties warm-up from sheet (explicit runner, not automatic)
+populateSidebarStatePropertiesCache({ userId, dryRun: true, force: false });
+
+// Health check — last archival/pruning timestamps + summaries
+checkSidebarStateLifecycleHealth({ source: 'manual' });
 ```
+
+### Trigger setup
+Monthly lifecycle trigger (`scheduledSidebarStateArchival`) is installed by **Repair Triggers**
+(`ensureCoreTriggersHealthy_` in Menu.js): 1st of month at 2:00, deduped like other core triggers.
 
 ---
 
@@ -197,14 +209,16 @@ const draft = getSidebarCurrentState(user, 'draft');
 ## Next Steps
 
 1. **Test**: Verify all sidebar features work with hybrid storage
-2. **Enable Phase 3**: Set up archival trigger (not started — lifecycle triggers remain disabled)
-3. **Monitor**: Track performance improvements
+2. **Phase 3 lifecycle**: Repair Triggers installs monthly archival/pruning; run populate runner per user if needed
+3. **Monitor**: `checkSidebarStateLifecycleHealth()` or script properties `SIDEBAR_LIFECYCLE_LAST_*`
 
 ---
 
 ## Files Changed
 
-- `SidebarStateStorage.js` - Abstraction layer (`getSidebarCurrentState`, `saveSidebarState`, `getSidebarHistory`, legacy type matching)
+- `SidebarStateStorage.js` - Abstraction layer + Phase 3 lifecycle (archival, pruning, populate, health)
+- `Menu.js` - Monthly sidebar lifecycle trigger in `ensureCoreTriggersHealthy_`
+- `admin/_PopulateSidebarPropertiesCache.js` - Documented populate runner menu helper
 - `05_AISidebar_UI.js` - Migrated `getAIQuoteSidebarState()` (unwrap Properties envelope)
 - `05_AISidebar_UI_compact.js` - Migrated persist/load callers (`persistSidebarState`, `recordScopeApproval`, `getScopeContractOverview`, etc.)
 - `05_AISidebar_Extracted.js` - Same caller migrations (parallel definitions)
@@ -214,5 +228,5 @@ const draft = getSidebarCurrentState(user, 'draft');
 ---
 
 **Date**: 2026-01-12 (updated 2026-08-16)
-**Status**: Phase 2 complete
+**Status**: Phase 3 complete (lifecycle wired; PR targets Phase 2 branch until merged)
 **Performance Gain**: 10x faster, 96% less data

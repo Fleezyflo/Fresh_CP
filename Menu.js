@@ -1654,7 +1654,7 @@ function repairTriggersMenu() {
   const trace = UnifiedLogger.startTrace('Menu', 'repairTriggersMenu');
   try {
     const summary = ensureCoreTriggersHealthy_({ allowCreate: true });
-    const created = ['createdOnOpen', 'createdOnChange', 'createdDeferred', 'createdReadiness', 'createdPropConsent', 'createdIntegration'].filter(function(key) { return summary[key]; }).length;
+    const created = ['createdOnOpen', 'createdOnChange', 'createdDeferred', 'createdReadiness', 'createdPropConsent', 'createdIntegration', 'createdSidebarLifecycle'].filter(function(key) { return summary[key]; }).length;
     const message = [
       'onOpen=' + (summary.onOpenPresent ? 'ok' : 'missing'),
       'onChange=' + (summary.onChangePresent ? 'ok' : 'missing'),
@@ -1662,6 +1662,7 @@ function repairTriggersMenu() {
       'readiness=' + (summary.readinessPresent ? 'ok' : 'missing'),
       'propConsent=' + (summary.propConsentPresent ? 'ok' : 'missing'),
       'integration=' + (summary.integrationHealthPresent ? 'ok' : 'missing'),
+      'sidebarLifecycle=' + (summary.sidebarLifecyclePresent ? 'ok' : 'missing'),
       'created=' + created,
       summary.errors && summary.errors.length ? ('errors=' + summary.errors.length) : null
     ].filter(Boolean).join(' | ');
@@ -3050,6 +3051,7 @@ function ensureCoreTriggersHealthy_(options) {
     readinessPresent: false,
     propConsentPresent: false,
     integrationHealthPresent: false,
+    sidebarLifecyclePresent: false,
     runOnOpenAsyncPresent: false,
     createdOnOpen: false,
     createdOnChange: false,
@@ -3057,6 +3059,7 @@ function ensureCoreTriggersHealthy_(options) {
     createdReadiness: false,
     createdPropConsent: false,
     createdIntegration: false,
+    createdSidebarLifecycle: false,
     deletedStale: 0,
     deletedDuplicates: 0,
     errors: []
@@ -3122,13 +3125,16 @@ function ensureCoreTriggersHealthy_(options) {
       if (handler === 'runIntegrationsDailyHealth') {
         summary.integrationHealthPresent = true;
       }
+      if (handler === 'scheduledSidebarStateArchival') {
+        summary.sidebarLifecyclePresent = true;
+      }
       if (handler === 'runOnOpenAsync') {
         summary.runOnOpenAsyncPresent = true;
       }
     });
 
     // Note: onOpenPresent deliberately not checked - simple onOpen() trigger is always present and can't be disabled
-    const noCoreTriggers = !summary.onChangePresent && !summary.deferredPresent && !summary.readinessPresent && !summary.propConsentPresent && !summary.integrationHealthPresent;
+    const noCoreTriggers = !summary.onChangePresent && !summary.deferredPresent && !summary.readinessPresent && !summary.propConsentPresent && !summary.integrationHealthPresent && !summary.sidebarLifecyclePresent;
     const creationAllowed = allowCreate || noCoreTriggers;
     if (creationAllowed) {
       ScriptApp.requireScopes(ScriptApp.AuthMode.FULL, [
@@ -3249,6 +3255,36 @@ function ensureCoreTriggersHealthy_(options) {
       }
     } else if (props) {
       props.setProperty('INTEGRATIONS_HEALTH_TRIGGER', 'true');
+    }
+
+    if (!summary.sidebarLifecyclePresent && creationAllowed) {
+      try {
+        ScriptApp.newTrigger('scheduledSidebarStateArchival')
+          .timeBased()
+          .onMonthDay(1)
+          .atHour(2)
+          .create();
+        summary.sidebarLifecyclePresent = true;
+        summary.createdSidebarLifecycle = true;
+        if (props) {
+          props.setProperty('SIDEBAR_LIFECYCLE_TRIGGER', 'true');
+          props.deleteProperty('TRIGGER_SETUP_BLOCKED');
+        }
+      } catch (createError) {
+        summary.errors.push('create-sidebarLifecycle:' + createError);
+        try {
+          if (props) props.setProperty('SIDEBAR_LIFECYCLE_TRIGGER', 'disabled');
+          const store = props || getScriptProperty.props || PropertiesService.getScriptProperties();
+          if (store) store.setProperty('TRIGGER_SETUP_BLOCKED', 'scheduledSidebarStateArchival');
+        } catch (ignore) {
+      // Silent fail
+    }
+        if (allowCreate) {
+          logToast_('Trigger Setup', 'Sidebar lifecycle trigger blocked (policy/consent). See Repair Triggers.', 8, 'WARN', { error: '' + createError });
+        }
+      }
+    } else if (props) {
+      props.setProperty('SIDEBAR_LIFECYCLE_TRIGGER', 'true');
     }
   } catch (error) {
     trace.fail('ensureCoreTriggersHealthy_ failed', error);
